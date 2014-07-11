@@ -1,0 +1,12 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    irc-helpers (0.1.1)
+    unicode (0.4.4.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  irc-helpers
+  unicode
