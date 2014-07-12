@@ -260,6 +260,8 @@ module Repoto
                             send_message_to_user usernick, "Well, that' s how it is..."
                         elsif content.upcase.include?("ARE") && content.upcase.include?("YOU") && content.upcase.include?("OK")
                             send_message_to_user usernick, "Yes, I' m fine."
+                        elsif content.upcase.include?("PREFIX")
+                            send_message_to_user usernick, "My command prefix is ^"
                         else
                             send_message_to_user usernick, "What?"
                         end
