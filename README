@@ -4,3 +4,8 @@ Current functionality:
 - Some fun commands and responses
 - Ability to create and save custom commands
 - Operator authentication
+
+Running:
+- Create config.yml
+- Create dynconfig.yml with you as an operator
+- Execute ruby run.rb
