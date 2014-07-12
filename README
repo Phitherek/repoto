@@ -1,0 +1,6 @@
+Repoto - a simple IRC bot in Ruby.
+
+Current functionality:
+- Some fun commands and responses
+- Ability to create and save custom commands
+- Operator authentication

@@ -130,31 +130,23 @@ module Repoto
                                 send_message_to_user usernick, "No custom commands yet!"
                             end
                         when "ac"
-                            if oper
-                                if !cmd[1].nil? && !cmd[2].nil?
-                                    @dynconfig[:c] ||= {}
-                                    @dynconfig[:c][cmd[1].to_sym] = cmd[2..-1].join(" ").to_s
-                                    send_message_to_user usernick, "Custom command created!"
-                                else
-                                    send_message_to_user usernick, "Usage: ac command_name command_output"
-                                end
+                            if !cmd[1].nil? && !cmd[2].nil?
+                                @dynconfig[:c] ||= {}
+                                @dynconfig[:c][cmd[1].to_sym] = cmd[2..-1].join(" ").to_s
+                                send_message_to_user usernick, "Custom command created!"
                             else
-                                send_message_to_user usernick, "You are not authorized!"
+                                send_message_to_user usernick, "Usage: ac command_name command_output"
                             end
                         when "rc"
-                            if oper
-                                if !cmd[1].nil?
-                                    if !@dynconfig[:c].nil? && !@dynconfig[:c][cmd[1].to_sym].nil?
-                                        @dynconfig[:c].delete(cmd[1].to_sym)
-                                        send_message_to_user usernick, "Custom command removed!"
-                                    else
-                                        send_message_to_user usernick, "Could not find command!"
-                                    end
+                            if !cmd[1].nil?
+                                if !@dynconfig[:c].nil? && !@dynconfig[:c][cmd[1].to_sym].nil?
+                                    @dynconfig[:c].delete(cmd[1].to_sym)
+                                    send_message_to_user usernick, "Custom command removed!"
                                 else
-                                    send_message_to_user usernick, "Usage: rc command_name"
+                                    send_message_to_user usernick, "Could not find command!"
                                 end
                             else
-                                send_message_to_user usernick, "You are not authorized!"
+                                send_message_to_user usernick, "Usage: rc command_name"
                             end
                         when "c"
                             if !cmd[1].nil?
@@ -194,7 +186,7 @@ module Repoto
                             end
                         when "help"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "Available commands: ^version, ^creator, ^operators, ^addop, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
+                                send_message_to_user usernick, "Available commands: ^version, ^creator, ^operators, ^addop, ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
                             else
                                 case cmd[1]
                                 when "version"
@@ -209,6 +201,14 @@ module Repoto
                                     send_message_to_user usernick, "I will ping a user... but tell him that was your request."
                                 when "kick"
                                     send_message_to_user usernick, "I will kick a user... but tell him that was your request."
+                                when "ac"
+                                    send_message_to_user usernick, "I will add a custom command."
+                                when "lc"
+                                    send_message_to_user usernick, "I will list custom commands."
+                                when "c"
+                                    send_message_to_user usernick, "I will execute a custom command."
+                                when "rc"
+                                    send_message_to_user usernick, "I will remove a custom command."
                                 when "exit"
                                     if oper
                                         send_message_to_user usernick, "I will end my existence... for now."
