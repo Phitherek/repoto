@@ -1,0 +1,5 @@
+:version: 0.3.0
+:server: irc.freenode.net
+:port: 6665
+:channel: cwm-pg
+
