@@ -31,7 +31,7 @@ module Repoto
             while line = @conn.gets
                 oper = false
                 auth = false
-                puts "SERVER: " + line
+                #puts "SERVER: " + line
                 la = line.split(" ")
                 if la[0] == "PING"
                     puts "Ping-pong..."
