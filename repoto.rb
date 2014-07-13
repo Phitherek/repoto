@@ -3,6 +3,7 @@ require 'yaml'
 require 'fileutils'
 require 'net/http'
 require 'json'
+require 'simplelion-ruby'
 
 module Repoto
     class Bot
@@ -20,7 +21,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.5"
+            @version = "0.5.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -184,6 +185,28 @@ module Repoto
                                 send_message_to_user usernick, "Hackerspace Kraków specific functions disabled!"
                             else
                                 send_message_to_user usernick, "You are not authorized!"
+                            end
+                        when "enablemp"
+                            if @dynconfig[:hskrk] == "on"
+                                if oper
+                                    @dynconfig[:mp] = "on"
+                                    send_message_to_user usernick, "Maka Paka mode enabled!"
+                                else
+                                    send_message_to_user usernick, "You are not authorized!"
+                                end
+                            else
+                                send_message_to_user usernick, "I do not know this command!"
+                            end
+                        when "disablemp"
+                            if @dynconfig[:hskrk] == "on"
+                                if oper
+                                    @dynconfig[:mp] = "off"
+                                    send_message_to_user usernick, "Maka Paka mode disabled!"
+                                else
+                                    send_message_to_user usernick, "You are not authorized!"
+                                end
+                            else
+                                send_message_to_user usernick, "I do not know this command!"
                             end
                         when "whois"
                             if @dynconfig[:hskrk] == "on"
@@ -360,6 +383,9 @@ module Repoto
                         else
                             send_message_to_user usernick, "What?"
                         end
+                    elsif msg.upcase.include?("MAKA") && msg.upcase.include?("PAKA") && @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on"
+                        puts (oper ? "[oper]" : "") + usernick + ": " + msg
+                        send_message "maka paka "*Random.new.rand(10..30)
                     else
                         puts (oper ? "[oper]" : "") + usernick + ": " + msg
                     end
