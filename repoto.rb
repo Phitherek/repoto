@@ -20,7 +20,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.4.1"
+            @version = "0.5"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -188,8 +188,56 @@ module Repoto
                         when "whois"
                             if @dynconfig[:hskrk] == "on"
                                 data = Net::HTTP.get("whois.hskrk.pl", "/whois")
-                                data = JSON.parse(data)
-                                send_message_to_user usernick, "In HS: #{data["total_devices_count"]} devices, #{data["unknown_devices_count"]} unknown. Users: #{data["users"].join(", ")}"
+                                if !data.nil?
+                                    data = JSON.parse(data)
+                                    send_message_to_user usernick, "In HS: #{data["total_devices_count"]} devices, #{data["unknown_devices_count"]} unknown. Users: #{data["users"].join(", ")}"
+                                else
+                                    send_message_to_user usernick, "Connection error..."
+                                end
+                            else
+                                send_message_to_user usernick, "I do not know this command!"
+                            end
+                        when "temp"
+                            if @dynconfig[:hskrk] == "on"
+                                data = Net::HTTP.get("spaceapi.hskrk.pl", "/")
+                                if !data.nil?
+                                    data = JSON.parse(data)
+                                    data = data["sensors"]
+                                    data = data["temperature"]
+                                    msg = "Temperature in HS: "
+                                    data.each do |d|
+                                        msg += "#{d["location"]}: #{d["value"]} #{d["unit"]}"
+                                        msg += ", " unless d == data.last
+                                    end
+                                    send_message_to_user usernick, msg
+                                else
+                                     send_message_to_user usernick, "Connection error..."
+                                end
+                            else
+                                send_message_to_user usernick, "I do not know this command!"
+                            end
+                        when "light"
+                            if @dynconfig[:hskrk] == "on"
+                                data = Net::HTTP.get("spaceapi.hskrk.pl", "/")
+                                if !data.nil?
+                                    data = JSON.parse(data)
+                                    data = data["sensors"]
+                                    data = data["ext_lights"]
+                                    lights = []
+                                    data = data.first
+                                    data.keys.each do |key|
+                                        if data[key] == true
+                                            lights << key
+                                        end
+                                    end
+                                    if lights.empty?
+                                        send_message_to_user usernick, "All lights in HS are off"
+                                    else
+                                        send_message_to_user usernick, "Lights in HS: #{lights.join(", ")}"
+                                    end
+                                else
+                                    send_message_to_user usernick, "Connection error..."
+                                end
                             else
                                 send_message_to_user usernick, "I do not know this command!"
                             end
@@ -215,7 +263,7 @@ module Repoto
                             end
                         when "help"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "Available commands: ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? "^whois, " : ""} ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
+                                send_message_to_user usernick, "Available commands: ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
                             else
                                 case cmd[1]
                                 when "version"
@@ -241,6 +289,18 @@ module Repoto
                                 when "whois"
                                     if @dynconfig[:hskrk] == "on"
                                         send_message_to_user usernick, "I will show you who is in Hackerspace Kraków."
+                                    else
+                                        send_message_to_user usernick, "I do not know how to do this..."
+                                    end
+                                when "temp"
+                                    if @dynconfig[:hskrk] == "on"
+                                        send_message_to_user usernick, "I will show you the temperature in Hackerspace Kraków."
+                                    else
+                                        send_message_to_user usernick, "I do not know how to do this..."
+                                    end
+                                when "light"
+                                    if @dynconfig[:hskrk] == "on"
+                                        send_message_to_user usernick, "I will show you light status in Hackerspace Kraków."
                                     else
                                         send_message_to_user usernick, "I do not know how to do this..."
                                     end
