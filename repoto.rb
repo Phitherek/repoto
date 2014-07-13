@@ -1,6 +1,8 @@
 require 'socket'
 require 'yaml'
 require 'fileutils'
+require 'net/http'
+require 'json'
 
 module Repoto
     class Bot
@@ -18,7 +20,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = @config[:version]
+            @version = "0.4.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -169,6 +171,28 @@ module Repoto
                             else
                                 send_message_to_user usernick, "Which command?"
                             end
+                        when "enablehskrk"
+                            if oper
+                                @dynconfig[:hskrk] = "on"
+                                send_message_to_user usernick, "Hackerspace Kraków specific functions enabled!"
+                            else
+                                send_message_to_user usernick, "You are not authorized!"
+                            end
+                        when "disablehskrk"
+                            if oper
+                                @dynconfig[:hskrk] = "off"
+                                send_message_to_user usernick, "Hackerspace Kraków specific functions disabled!"
+                            else
+                                send_message_to_user usernick, "You are not authorized!"
+                            end
+                        when "whois"
+                            if @dynconfig[:hskrk] == "on"
+                                data = Net::HTTP.get("whois.hskrk.pl", "/whois")
+                                data = JSON.parse(data)
+                                send_message_to_user usernick, "In HS: #{data["total_devices_count"]} devices, #{data["unknown_devices_count"]} unknown. Users: #{data["users"].join(", ")}"
+                            else
+                                send_message_to_user usernick, "I do not know this command!"
+                            end
                         when "restart"
                             if oper
                                 send_message_to_user usernick, "... restarting ..."
@@ -191,7 +215,7 @@ module Repoto
                             end
                         when "help"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "Available commands: ^version, ^creator, ^operators, ^addop, ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
+                                send_message_to_user usernick, "Available commands: ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? "^whois, " : ""} ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
                             else
                                 case cmd[1]
                                 when "version"
@@ -214,6 +238,12 @@ module Repoto
                                     send_message_to_user usernick, "I will execute a custom command."
                                 when "rc"
                                     send_message_to_user usernick, "I will remove a custom command."
+                                when "whois"
+                                    if @dynconfig[:hskrk] == "on"
+                                        send_message_to_user usernick, "I will show you who is in Hackerspace Kraków."
+                                    else
+                                        send_message_to_user usernick, "I do not know how to do this..."
+                                    end
                                 when "exit"
                                     if oper
                                         send_message_to_user usernick, "I will end my existence... for now."
