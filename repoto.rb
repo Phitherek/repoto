@@ -17,27 +17,30 @@ module Repoto
             end
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
+            @suffix = @config[:suffix]
             @version = @config[:version]
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
+            @imsg_enabled = false
             
             puts "Connecting..."
             
-            @conn = TCPSocket.new @server, @port
-            puts "NICK #{@nick}"
-            @conn.puts "NICK #{@nick}"
-            puts "USER #{@nick.downcase} 8 * :#{@nick}"
-            @conn.puts "USER #{@nick.downcase} 8 * :#{@nick}"
-            puts "JOIN :#{@channel}"
-            @conn.puts "JOIN :#{@channel}"
+            connect
+            
             while line = @conn.gets
                 oper = false
-                #puts "SERVER: " + line
+                auth = false
+                puts "SERVER: " + line
                 la = line.split(" ")
                 if la[0] == "PING"
                     puts "Ping-pong..."
                     @conn.puts "PONG #{la[1]}"
+                end
+                if la[0][0] == ":"
+                    if la[1] == "CAP" && la[2] == "#{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}" && la[3] == "ACK" && la[4] == ":identify-msg"
+                        @imsg_enabled = true
+                    end
                 end
                 usernick = ""
                 la[0].chars.each do |l|
@@ -66,6 +69,14 @@ module Repoto
                     next
                 else
                     msg = msg[1..-1]
+                    if @imsg_enabled
+                        if msg[0] == "+"
+                            auth = true
+                        else
+                            oper = false
+                        end
+                        msg = msg[1..-1]
+                    end
                     if msg[0] == "^" && msg[1] != "^" && msg[1] != "_" && msg[1] != " " && msg[1] != "\n" && msg[1] != nil
                         cmd = msg[1..-1]
                         cmd = cmd.split(" ")
@@ -174,13 +185,7 @@ module Repoto
                                 else
                                     @dynconfig = {}
                                 end
-                                @conn = TCPSocket.new @server, @port
-                                puts "NICK #{@nick}"
-                                @conn.puts "NICK #{@nick}"
-                                puts "USER #{@nick.downcase} 8 * :#{@nick}"
-                                @conn.puts "USER #{@nick.downcase} 8 * :#{@nick}"
-                                puts "JOIN :#{@channel}"
-                                @conn.puts "JOIN :#{@channel}"
+                                connect
                             else
                                 send_message_to_user usernick, "You are not authorized!"
                             end
@@ -271,6 +276,20 @@ module Repoto
                 end
             end
             @conn.close
+        end
+        
+        def connect
+            @conn = TCPSocket.new @server, @port
+            puts "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
+            @conn.puts "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
+            puts "USER #{@nick.downcase}#{!@suffix.nil? ? "-#{@suffix.downcase}" : ""} 8 * :#{@nick}"
+            @conn.puts "USER #{@nick.downcase}#{!@suffix.nil? ? "-#{@suffix.downcase}" : ""} 8 * :#{@nick}"
+            puts "CAP REQ identify-msg"
+            @conn.puts "CAP REQ identify-msg"
+            puts "CAP END"
+            @conn.puts "CAP END"
+            puts "JOIN :#{@channel}"
+            @conn.puts "JOIN :#{@channel}"
         end
         
         def send_message msg

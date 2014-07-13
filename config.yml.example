@@ -1,5 +1,5 @@
-:version: 0.3.0
+:version: 0.4.0
 :server: <your-IRC-server>
 :port: <your-IRC-port>
 :channel: <your-IRC-channel-without-#>
-
+:suffix: <bot-nickname-suffix>
