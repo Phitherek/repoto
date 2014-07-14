@@ -29,7 +29,7 @@ zaczepia
 [msg2]
 na zlecenie
 [msg3]
-
+-(a|y|i)
 {end}
 {kick}
 [question]
@@ -39,7 +39,7 @@ kopie
 [msg2]
 na zlecenie
 [msg3]
-
+-(a|y|i)
 {end}
 {ping}
 [question]
