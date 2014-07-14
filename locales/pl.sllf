@@ -108,7 +108,7 @@ Wszystkie światła w HS są wyłączone
 {locale}
 [success]
 Locale zmienione pomyślnie!
-[no_locale]
+[not_found]
 Nie mogłem znaleźć takiego locale!
 {end}
 {restart}

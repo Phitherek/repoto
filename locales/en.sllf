@@ -108,7 +108,7 @@ Lights in HS:
 {locale}
 [success]
 Locale switched successfully!
-[no_locale]
+[not_found]
 I could not find such locale!
 {end}               
 {restart}
