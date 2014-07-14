@@ -1,0 +1,226 @@
+[usage]
+Użycie:
+{errors}
+[not_authorized]
+Nie masz wystarczających uprawnień!
+[no_command]
+Nie znam takiej komendy!
+[connection]
+Błąd połączenia...
+{end}
+{functions}
+[version]
+Moja wersja to
+[creator]
+Stworzył mnie
+[operators]
+Moi operatorzy to:
+{exit}
+[channel]
+Na razie!
+[quit]
+Wychodzę na zlecenie operatora...
+{end}
+{poke}
+[question]
+Kogo zaczepić?
+[msg1]
+zaczepia
+[msg2]
+na zlecenie
+[msg3]
+
+{end}
+{kick}
+[question]
+Kogo kopnąć?
+[msg1]
+kopie
+[msg2]
+na zlecenie
+[msg3]
+
+{end}
+{ping}
+[question]
+Kogo spingować?
+[msg]
+Ping od 
+{end}
+[addop]
+właśnie dał Ci uprawnienia operatora!
+[dumpdyn]
+Dynamiczna konfiguracja zapisana!
+{lc}
+[prelist]
+Komendy niestandardow:
+[no_commands]
+Na razie nie mam komend niestandardowych!
+{end}
+{ac}
+[success]
+Niestandardowa komenda stworzona pomyślnie!
+[command_name]
+nazwa_komendy
+[command_output]
+wyjście_komendy
+{end}
+{rc}
+[success]
+Niestandardowa komenda usunięta pomyślnie!
+[no_command]
+Nie udało mi się znaleźć takiej komendy!
+[command_name]
+nazwa_komendy
+{end}
+{c}
+[no_command]
+Nie mogłem znaleźć tej komendy, wybacz...
+[question]
+Jaka komenda?
+{end}
+[enablehskrk]
+Włączono funkcje specyficzne dla Hackerspace Kraków!
+[disablehskrk]
+Wyłączono funkcje specyficzne dla Hackerspace Kraków!
+[enablemp]
+Włączono tryb Maka Paka!
+[disablemp]
+Wyłączono tryb Maka Paka!
+{whois}
+[in_hs]
+W HS:
+[devices]
+urządzeń
+[unknown]
+nieznanych
+[users]
+Użytkownicy:
+{end}
+[temp]
+Temperatura w HS:
+{light}
+[no_lights]
+Wszystkie światła w HS są wyłączone
+[lights_in_hs]
+Światła w HS:
+{end}
+[locale]
+Locale zmienione pomyślnie!
+{restart}
+[channel]
+... restartowanie ...
+[quit]
+Wychodzę na zlecenie operatora...
+{end}
+{end}
+{help}
+[no_command]
+Nie wiem jak to zrobić...
+[available_commands]
+Dostępne komendy:
+[not_operator]
+Nie powiem Ci, ta komenda jest dostępna tylko dla moich operatorów.
+[version]
+Wypiszę moją wersję.
+[creator]
+Dowiesz się kto mnie stworzył.
+[operators]
+Poznasz wszystkich moich operatorów.
+[poke]
+Zaczepię użytkownika... ale powiem mu, że na Twoje zlecenie.
+[ping]
+Spinguję użytkownika... ale powiem mu, że na Twoje zlecenie.
+[kick]
+Kopnę użytkownika... ale powiem mu, że na Twoje zlecenie.
+[ac]
+Dodam niestandardową komendę.
+[lc]
+Wypiszę niestandardowe komendy.
+[c]
+Uruchomię niestandardową komendę.
+[rc]
+Usunę niestandardową komendę.
+[whois]
+Pokażę Ci kto aktualnie jest w Hackerspace Kraków.
+[temp]
+Pokażę Ci temperaturę w Hackerspace Kraków.
+[light]
+Pokażę Ci stan świateł w Hackerspace Kraków.
+[exit]
+Zakończę swoją egzystencję... na razie.
+[restart]
+Zakończę swoją egzystencję, ale będę żył dalej.
+[addop]
+Dodam operatora.
+[dumpdyn]
+Na stałe zapiszę dynamiczną konfigurację.
+[locales]
+Pokażę Ci dostępne locale.
+[locale]
+Pokażę Ci obecne locale lub je przełączę.
+{end}
+{conv}
+{keywords}
+[name]
+imię
+[ping]
+ping
+[what]
+jakie
+[please]
+proszę
+[what2]
+co
+[up]
+tam
+[hi]
+cześć
+[hey]
+hej
+[bye]
+pa
+[bot]
+bot
+[good]
+dobry
+[bad]
+zły
+[moron]
+głupi
+[useless]
+bezużyteczny
+[wat]
+WAT?
+[are]
+wszystko
+[you]
+w
+[ok]
+porządku
+[prefix]
+prefiks
+{end}
+[name]
+Mam na imię Repoto. Miło Cię spotkać.
+[pong]
+Pong
+[whats_up]
+Wszystko w porządku, dzięki.
+[hi]
+Hej, co tam?
+[bye]
+Na razie.
+[good_bot]
+Zawsze do usług ;)
+[bad_bot]
+Tak mnie zaprogramowano :(
+[wat]
+Cóż, bywa...
+[are_you_ok]
+Tak, wszystko w porządku.
+[prefix]
+Mój prefiks do komend do ^
+[generic]
+Co?
+{end}
