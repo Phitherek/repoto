@@ -22,7 +22,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.6.3"
+            @version = "0.6.4"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -82,6 +82,9 @@ module Repoto
                             oper = false
                         end
                         msg = msg[1..-1]
+                    end
+                    if msg.nil? || msg.empty?
+                        next
                     end
                     if msg[0] == "^" && msg[1] != "^" && msg[1] != "_" && msg[1] != " " && msg[1] != "\n" && msg[1] != nil
                         cmd = msg[1..-1]
