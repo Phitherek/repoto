@@ -281,7 +281,7 @@ module Repoto
                                             @loc.setLocale(@dynconfig[:locale])
                                             send_message_to_user usernick, @loc.query("functions.locale.success")
                                         else
-                                            send_message_to_user @loc.query("functions.locale.not_found")
+                                            send_message_to_user usernick, @loc.query("functions.locale.not_found")
                                         end
                                     rescue SimpleLion::FileException => e
                                         send_message_to_user usernick, "FileException! => #{e.to_s}"
