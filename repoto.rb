@@ -4,6 +4,7 @@ require 'fileutils'
 require 'net/http'
 require 'json'
 require 'simplelion-ruby'
+require 'unicode'
 
 module Repoto
     class Bot
@@ -21,10 +22,11 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.5.1"
+            @version = "0.6"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
+            @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
             @imsg_enabled = false
             
             puts "Connecting..."
@@ -85,47 +87,47 @@ module Repoto
                         cmd = cmd.split(" ")
                         case cmd[0]
                         when "version"
-                            send_message_to_user usernick, "My version is #{@version}"
+                            send_message_to_user usernick, "#{@loc.query "functions.version"} #{@version}"
                         when "creator"
-                            send_message_to_user usernick, "I have been created by #{@creator}"
+                            send_message_to_user usernick, "#{@loc.query "functions.creator"} #{@creator}"
                         when "operators"
-                            send_message_to_user usernick, "My operators are: #{@dynconfig[:operators].join(" ")}"
+                            send_message_to_user usernick, "#{@loc.query "functions.operators"} #{@dynconfig[:operators].join(" ")}"
                         when "exit"
                             if oper
-                                send_message_to_user usernick, "Bye!"
-                                @conn.puts "QUIT :Exiting on operator' s request..."
+                                send_message_to_user usernick, @loc.query "functions.exit.channel"
+                                @conn.puts "QUIT :#{@loc.query "functions.exit.quit"}"
                                 break
                             else
-                                send_message_to_user usernick, "You are not authorized!"
+                                send_message_to_user usernick, @loc.query "errors.not_authorized"
                             end
                         when "poke"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "Who to poke?"
+                                send_message_to_user usernick, @loc.query "functions.poke.question"
                             else
-                                perform_action "pokes #{cmd[1]} on #{usernick}' s request"
+                                perform_action "#{@loc.query "functions.poke.msg1"} #{cmd[1]} #{@loc.query "functions.poke.msg2"} #{usernick}#{@loc.query "functions.poke.msg3"}"
                             end
                         when "kick"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "Who to kick?"
+                                send_message_to_user usernick, @loc.query "functions.kick.question"
                             else
-                                perform_action "kicks #{cmd[1]} on #{usernick}' s request"
+                                perform_action "#{@loc.query "functions.kick.msg1"} #{cmd[1]} #{@loc.query "functions.poke.msg2"} #{usernick}#{@loc.query "functions.kick.msg3"}"
                             end
                         when "ping"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "Who to ping?"
+                                send_message_to_user usernick, @loc.query "functions.ping.question"
                             else
-                                send_message_to_user cmd[1], "Ping from #{usernick}."
+                                send_message_to_user cmd[1], "#{@loc.query "functions.ping.msg"} #{usernick}."
                             end
                         when "addop"
                             if oper
                                 if !cmd[1].nil?
                                     @dynconfig[:operators] << cmd[1]
-                                    send_message_to_user cmd[1], "#{usernick} has just made you an operator!"
+                                    send_message_to_user cmd[1], "#{usernick} #{@loc.query "functions.operators"}"
                                 else
-                                    send_message_to_user usernick, "Usage: ^addop user_nick"
+                                    send_message_to_user usernick, "#{@loc.query "usage"} ^addop user_nick"
                                 end
                             else
-                                send_message_to_user usernick, "You are not authorized!"
+                                send_message_to_user usernick, @loc.query("errors.not_authorized")
                             end
                         when "dumpdyn"
                             if oper
@@ -133,92 +135,92 @@ module Repoto
                                 File.open("dynconfig.yml", "w") do |f|
                                     f << YAML.dump(@dynconfig)
                                 end
-                                send_message_to_user usernick, "Dynamic config saved!"
+                                send_message_to_user usernick, @loc.query("functions.dumpdyn")
                             else
-                                send_message_to_user usernick, "You are not authorized!"
+                                send_message_to_user usernick, @loc.query("errors.not_authorized")
                             end
                         when "lc"
                             if !@dynconfig[:c].nil?
-                                send_message_to_user usernick, "Custom commands: " + @dynconfig[:c].keys.join(" ").to_s
+                                send_message_to_user usernick, "#{@loc.query("functions.lc.prelist")} " + @dynconfig[:c].keys.join(" ").to_s
                             else
-                                send_message_to_user usernick, "No custom commands yet!"
+                                send_message_to_user usernick, @loc.query("functions.lc.no_commands")
                             end
                         when "ac"
                             if !cmd[1].nil? && !cmd[2].nil?
                                 @dynconfig[:c] ||= {}
                                 @dynconfig[:c][cmd[1].to_sym] = cmd[2..-1].join(" ").to_s
-                                send_message_to_user usernick, "Custom command created!"
+                                send_message_to_user usernick, @loc.query("functions.ac.success")
                             else
-                                send_message_to_user usernick, "Usage: ac command_name command_output"
+                                send_message_to_user usernick, "#{@loc.query("usage")} ac #{@loc.query("functions.ac.command_name")} #{@loc.query("functions.ac.command_output")}"
                             end
                         when "rc"
                             if !cmd[1].nil?
                                 if !@dynconfig[:c].nil? && !@dynconfig[:c][cmd[1].to_sym].nil?
                                     @dynconfig[:c].delete(cmd[1].to_sym)
-                                    send_message_to_user usernick, "Custom command removed!"
+                                    send_message_to_user usernick, @loc.query("functions.rc.success")
                                 else
-                                    send_message_to_user usernick, "Could not find command!"
+                                    send_message_to_user usernick, @loc.query("functions.rc.no_command")
                                 end
                             else
-                                send_message_to_user usernick, "Usage: rc command_name"
+                                send_message_to_user usernick, "#{@loc.query "usage"} rc #{@loc.query("functions.rc.command_name")}"
                             end
                         when "c"
                             if !cmd[1].nil?
                                 if !@dynconfig[:c].nil? && !@dynconfig[:c][cmd[1].to_sym].nil?
                                     send_message @dynconfig[:c][cmd[1].to_sym].to_s
                                 else
-                                    send_message_to_user usernick, "Could not find this command, sorry..."
+                                    send_message_to_user usernick, @loc.query("functions.c.no_command")
                                 end
                             else
-                                send_message_to_user usernick, "Which command?"
+                                send_message_to_user usernick, @loc.query("functions.c.question")
                             end
                         when "enablehskrk"
                             if oper
                                 @dynconfig[:hskrk] = "on"
-                                send_message_to_user usernick, "Hackerspace Kraków specific functions enabled!"
+                                send_message_to_user usernick, @loc.query("functions.enablehskrk")
                             else
-                                send_message_to_user usernick, "You are not authorized!"
+                                send_message_to_user usernick, @loc.query("errors.not_authorized")
                             end
                         when "disablehskrk"
                             if oper
                                 @dynconfig[:hskrk] = "off"
-                                send_message_to_user usernick, "Hackerspace Kraków specific functions disabled!"
+                                send_message_to_user usernick, @loc.query("functions.disablehskrk")
                             else
-                                send_message_to_user usernick, "You are not authorized!"
+                                send_message_to_user usernick, @loc.query("errors.not_authorized")
                             end
                         when "enablemp"
                             if @dynconfig[:hskrk] == "on"
                                 if oper
                                     @dynconfig[:mp] = "on"
-                                    send_message_to_user usernick, "Maka Paka mode enabled!"
+                                    send_message_to_user usernick, @loc.query("functions.enablemp")
                                 else
-                                    send_message_to_user usernick, "You are not authorized!"
+                                    send_message_to_user usernick, @loc.query("errors.not_authorized")
                                 end
                             else
-                                send_message_to_user usernick, "I do not know this command!"
+                                send_message_to_user usernick, @loc.query("errors.no_command")
                             end
                         when "disablemp"
                             if @dynconfig[:hskrk] == "on"
                                 if oper
                                     @dynconfig[:mp] = "off"
-                                    send_message_to_user usernick, "Maka Paka mode disabled!"
+                                    send_message_to_user usernick, @loc.query("functions.disablemp")
                                 else
-                                    send_message_to_user usernick, "You are not authorized!"
+                                    send_message_to_user usernick, @loc.query("errors.not_authorized")
                                 end
                             else
-                                send_message_to_user usernick, "I do not know this command!"
+                                send_message_to_user usernick, @loc.query("errors.no_command")
                             end
                         when "whois"
                             if @dynconfig[:hskrk] == "on"
                                 data = Net::HTTP.get("whois.hskrk.pl", "/whois")
                                 if !data.nil?
                                     data = JSON.parse(data)
-                                    send_message_to_user usernick, "In HS: #{data["total_devices_count"]} devices, #{data["unknown_devices_count"]} unknown. Users: #{data["users"].join(", ")}"
+                                    send_message_to_user usernick, "#{@loc.query("functions.whois.in_hs")} #{data["total_devices_count"]} #{@loc.query("functions.whois.devices")}, #{data["unknown_devices_count"]} #{@loc.query("functions.whois.unknown")}. #{@loc.query("functions.whois.users")} #{data["users"].join(", ")}"
                                 else
-                                    send_message_to_user usernick, "Connection error..."
+                                    send_message_to_user usernick, @loc.query("errors.connection")
                                 end
                             else
-                                send_message_to_user usernick, "I do not know this command!"
+                                send_message_to_user usernick, @loc.query("errors.no_command")
                             end
                         when "temp"
                             if @dynconfig[:hskrk] == "on"
@@ -227,17 +229,17 @@ module Repoto
                                     data = JSON.parse(data)
                                     data = data["sensors"]
                                     data = data["temperature"]
-                                    msg = "Temperature in HS: "
+                                    msg = @loc.query("functions.temp") + " "
                                     data.each do |d|
                                         msg += "#{d["location"]}: #{d["value"]} #{d["unit"]}"
                                         msg += ", " unless d == data.last
                                     end
                                     send_message_to_user usernick, msg
                                 else
-                                     send_message_to_user usernick, "Connection error..."
+                                     send_message_to_user usernick, @loc.query("errors.connection")
                                 end
                             else
-                                send_message_to_user usernick, "I do not know this command!"
+                                send_message_to_user usernick, @loc.query("errors.no_command")
                             end
                         when "light"
                             if @dynconfig[:hskrk] == "on"
@@ -254,20 +256,41 @@ module Repoto
                                         end
                                     end
                                     if lights.empty?
-                                        send_message_to_user usernick, "All lights in HS are off"
+                                        send_message_to_user usernick, @loc.query("functions.light.no_lights")
                                     else
-                                        send_message_to_user usernick, "Lights in HS: #{lights.join(", ")}"
+                                        send_message_to_user usernick, "#{@loc.query("functions.light.lights_in_hs")} #{lights.join(", ")}"
                                     end
                                 else
-                                    send_message_to_user usernick, "Connection error..."
+                                     send_message_to_user usernick, @loc.query("errors.connection")
                                 end
                             else
-                                send_message_to_user usernick, "I do not know this command!"
+                                send_message_to_user usernick, @loc.query("errors.no_command")
+                            end
+                        when "locales"
+                            send_message_to_user usernick, "Available locales: " + @loc.localeList.join(" ")
+                        when "locale"
+                            if oper
+                                if cmd[1].nil?
+                                    send_message_to_user usernick, "Current locale: #{@dynconfig[:locale]}"
+                                    send_message_to_user usernick, "Usage: ^locale locale_to_switch_to"
+                                else
+                                    begin
+                                        @dynconfig[:locale] = cmd[1]
+                                        @loc.setLocale(@dynconfig[:locale])
+                                        send_message_to_user usernick, @loc.query("functions.locale")
+                                    rescue SimpleLion::FileException => e
+                                        send_message_to_user usernick, "FileException! => #{e.to_s}"
+                                    rescue SimpleLion::FilesystemException => e
+                                        send_message_to_user usernick, "FilesystemException! => #{e.to_s}"
+                                    end
+                                end
+                            else
+                                send_message_to_user usernick, @loc.query("errors.not_authorized")
                             end
                         when "restart"
                             if oper
-                                send_message_to_user usernick, "... restarting ..."
-                                @conn.puts "QUIT :Exiting on operator' s request..."
+                                send_message_to_user usernick, @loc.query("functions.restart.channel")
+                                @conn.puts "QUIT :#{@loc.query("functions.restart.quit")}"
                                 @conn.close
                                 sleep 5
                                 if File.exists?("config.yml")
@@ -280,110 +303,111 @@ module Repoto
                                 else
                                     @dynconfig = {}
                                 end
+                                @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
                                 connect
                             else
-                                send_message_to_user usernick, "You are not authorized!"
+                                send_message_to_user usernick, @loc.query("errors.not_authorized")
                             end
                         when "help"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "Available commands: ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
+                                send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
                             else
                                 case cmd[1]
                                 when "version"
-                                    send_message_to_user usernick, "I will print out my version."
+                                    send_message_to_user usernick, @loc.query("help.version")
                                 when "creator"
-                                    send_message_to_user usernick, "You will know who created me."
+                                    send_message_to_user usernick, @loc.query("help.creator")
                                 when "operators"
-                                    send_message_to_user usernick, "You will know all of my operators."
+                                    send_message_to_user usernick, @loc.query("help.operators")
                                 when "poke"
-                                    send_message_to_user usernick, "I will poke a user... but tell him that was your request."
+                                    send_message_to_user usernick, @loc.query("help.poke")
                                 when "ping"
-                                    send_message_to_user usernick, "I will ping a user... but tell him that was your request."
+                                    send_message_to_user usernick, @loc.query("help.ping")
                                 when "kick"
-                                    send_message_to_user usernick, "I will kick a user... but tell him that was your request."
+                                    send_message_to_user usernick, @loc.query("help.kick")
                                 when "ac"
-                                    send_message_to_user usernick, "I will add a custom command."
+                                    send_message_to_user usernick, @loc.query("help.ac")
                                 when "lc"
-                                    send_message_to_user usernick, "I will list custom commands."
+                                    send_message_to_user usernick, @loc.query("help.lc")
                                 when "c"
-                                    send_message_to_user usernick, "I will execute a custom command."
+                                    send_message_to_user usernick, @loc.query("help.c")
                                 when "rc"
-                                    send_message_to_user usernick, "I will remove a custom command."
+                                    send_message_to_user usernick, @loc.query("help.rc")
                                 when "whois"
                                     if @dynconfig[:hskrk] == "on"
-                                        send_message_to_user usernick, "I will show you who is in Hackerspace Kraków."
+                                        send_message_to_user usernick, @loc.query("help.whois")
                                     else
-                                        send_message_to_user usernick, "I do not know how to do this..."
+                                        send_message_to_user usernick, @loc.query("help.no_command")
                                     end
                                 when "temp"
                                     if @dynconfig[:hskrk] == "on"
-                                        send_message_to_user usernick, "I will show you the temperature in Hackerspace Kraków."
+                                        send_message_to_user usernick, @loc.query("help.temp")
                                     else
-                                        send_message_to_user usernick, "I do not know how to do this..."
+                                        send_message_to_user usernick, @loc.query("help.no_command")
                                     end
                                 when "light"
                                     if @dynconfig[:hskrk] == "on"
-                                        send_message_to_user usernick, "I will show you light status in Hackerspace Kraków."
+                                        send_message_to_user usernick, @loc.query("help.light")
                                     else
-                                        send_message_to_user usernick, "I do not know how to do this..."
+                                        send_message_to_user usernick, @loc.query("help.no_command")
                                     end
                                 when "exit"
                                     if oper
-                                        send_message_to_user usernick, "I will end my existence... for now."
+                                        send_message_to_user usernick, @loc.query("help.exit")
                                     else
-                                        send_message_to_user usernick, "I will not tell you, this is only for my operators."
+                                        send_message_to_user usernick, @loc.query("help.not_operator")
                                     end
                                 when "restart"
                                     if oper
-                                        send_message_to_user usernick, "I will end my existence and then live again."
+                                        send_message_to_user usernick, @loc.query("help.restart")
                                     else
-                                        send_message_to_user usernick, "I will not tell you, this is only for my operators."
+                                        send_message_to_user usernick, @loc.query("help.not_operator")
                                     end
                                 when "addop"
                                     if oper
-                                        send_message_to_user usernick, "I will add an operator"
+                                        send_message_to_user usernick, @loc.query("help.addop")
                                     else
-                                        send_message_to_user usernick, "I will not tell you, this is only for my operators."
+                                        send_message_to_user usernick, @loc.query("help.not_operator")
                                     end
                                 when "dumpdyn"
                                     if oper
-                                        send_message_to_user usernick, "I will permanently save dynamic config"
+                                        send_message_to_user usernick, @loc.query("help.dumpdyn")
                                     else
-                                        send_message_to_user usernick, "I will not tell you, this is only for my operators."
+                                        send_message_to_user usernick, @loc.query("help.not_operator")
                                     end
                                 else
-                                    send_message_to_user usernick, "I do not know how to do this..."
+                                    send_message_to_user usernick, @loc.query("help.no_command")
                                 end
                             end
                         else                                          
-                           send_message_to_user usernick, "I do not know this command!"
+                           send_message_to_user usernick, @loc.query("errors.no_command")
                         end
                     elsif msg[0..6] == "Repoto:"
                         content = msg[8..-1]
-                        if content.upcase.include?("NAME") && (content.upcase.include?("WHAT") || content.upcase.include?("PLEASE"))
-                            send_message_to_user usernick, "My name is Repoto. Nice to meet you."
-                        elsif content.upcase == "PING"
-                            send_message_to_user usernick, "Pong."
-                        elsif content.upcase.include?("WHAT") && content.upcase.include?("UP")
-                            send_message_to_user usernick, "Everything' s fine, thank you."
-                        elsif content.upcase[0..1] == "HI" || content.upcase[0..2] == "HEY"
-                            send_message_to_user usernick, "Hi, what' s up?"
-                        elsif content.upcase[0..2] == "BYE"
-                            send_message_to_user usernick, "Bye."
-                        elsif content.upcase.include?("GOOD") && content.upcase.include?("BOT")
-                            send_message_to_user usernick, "Always at your service ;)"   
-                        elsif (content.upcase.include?("BAD") || content.upcase.include?("MORON") || content.upcase.include?("USELESS")) && content.upcase.include?("BOT")
-                            send_message_to_user usernick, "I was programmed that way :("
-                        elsif content.upcase == "WAT?"
-                            send_message_to_user usernick, "Well, that' s how it is..."
-                        elsif content.upcase.include?("ARE") && content.upcase.include?("YOU") && content.upcase.include?("OK")
-                            send_message_to_user usernick, "Yes, I' m fine."
-                        elsif content.upcase.include?("PREFIX")
-                            send_message_to_user usernick, "My command prefix is ^"
+                        if Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.name"))) && (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.your"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.please")))
+                            send_message_to_user usernick, @loc.query("conv.name")
+                        elsif Unicode.upcase(content) == Unicode.upcase(@loc.query("conv.keywords.ping"))
+                            send_message_to_user usernick, "#{@loc.query("conv.pong")}."
+                        elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.what"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.up")))
+                            send_message_to_user usernick, @loc.query("conv.whats_up")
+                        elsif Unicode.upcase(content)[0..1] == Unicode.upcase(@loc.query("conv.keywords.hi")) || Unicode.upcase(content)[0..2] == Unicode.upcase(@loc.query("conv.keywords.hey"))
+                            send_message_to_user usernick, @loc.query("conv.hi")
+                        elsif Unicode.upcase(content)[0..2] == Unicode.upcase(@loc.query("conv.keywords.bye"))
+                            send_message_to_user usernick, @loc.query("conv.bye")
+                        elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.good"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.bot")))
+                            send_message_to_user usernick, @loc.query("conv.good_bot")   
+                        elsif (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.bad"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.moron"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.useless")))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.bot")))
+                            send_message_to_user usernick, @loc.query("conv.bad_bot")
+                        elsif Unicode.upcase(content) == Unicode.upcase(@loc.query("conv.keywords.wat"))
+                            send_message_to_user usernick, @loc.query("conv.wat")
+                        elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.are"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.you"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.ok")))
+                            send_message_to_user usernick, @loc.query("conv.are_you_ok")
+                        elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.prefix")))
+                            send_message_to_user usernick, @loc.query("conv.prefix")
                         else
-                            send_message_to_user usernick, "What?"
+                            send_message_to_user usernick, @loc.query("conv.generic")
                         end
-                    elsif msg.upcase.include?("MAKA") && msg.upcase.include?("PAKA") && @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on"
+                    elsif Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA") && @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on"
                         puts (oper ? "[oper]" : "") + usernick + ": " + msg
                         send_message "maka paka "*Random.new.rand(10..30)
                     else

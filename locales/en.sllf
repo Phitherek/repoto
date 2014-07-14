@@ -1,0 +1,56 @@
+[usage]
+Usage: 
+{errors}
+[not_authorized]
+You are not authorized!
+{end}
+{functions}
+[version]
+My version is
+[creator]
+I have been created by
+[operators]
+My operators are:
+{exit}
+[channel]
+Bye!
+[quit]
+Exiting on operator' s request...
+{end}
+{poke}
+[question]
+Who to poke?
+[msg1]
+pokes 
+[msg2]
+on 
+[msg3]
+' s request
+{end}
+{kick}
+[question]
+Who to kick?
+[msg1]
+kicks
+[msg2]
+on
+[msg3]
+' s request
+{end}
+{ping}
+[question]
+Who to ping?
+[msg]
+Ping from 
+{end}
+[addop]
+has just made you an operator!
+[dumpdyn]
+Dynamic config saved!
+{lc}
+[prelist]
+Custom commands:
+[no_commands]
+No custom commands yet!
+{end}
+{end}
