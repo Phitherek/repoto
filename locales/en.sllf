@@ -105,8 +105,12 @@ All lights in HS are off
 [lights_in_hs]
 Lights in HS:
 {end}
-[locale]
+{locale}
+[success]
 Locale switched successfully!
+[no_locale]
+I could not find such locale!
+{end}               
 {restart}
 [channel]
 ... restarting ...

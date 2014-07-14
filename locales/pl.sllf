@@ -105,8 +105,12 @@ Wszystkie światła w HS są wyłączone
 [lights_in_hs]
 Światła w HS:
 {end}
-[locale]
+{locale}
+[success]
 Locale zmienione pomyślnie!
+[no_locale]
+Nie mogłem znaleźć takiego locale!
+{end}
 {restart}
 [channel]
 ... restartowanie ...

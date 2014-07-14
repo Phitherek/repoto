@@ -22,7 +22,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.6.2"
+            @version = "0.6.3"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -276,9 +276,13 @@ module Repoto
                                     send_message_to_user usernick, "Usage: ^locale locale_to_switch_to"
                                 else
                                     begin
-                                        @dynconfig[:locale] = cmd[1]
-                                        @loc.setLocale(@dynconfig[:locale])
-                                        send_message_to_user usernick, @loc.query("functions.locale")
+                                        if @loc.localeList.include?(cmd[1])
+                                            @dynconfig[:locale] = cmd[1]
+                                            @loc.setLocale(@dynconfig[:locale])
+                                            send_message_to_user usernick, @loc.query("functions.locale.success")
+                                        else
+                                            send_message_to_user @loc.query("functions.locale.not_found")
+                                        end
                                     rescue SimpleLion::FileException => e
                                         send_message_to_user usernick, "FileException! => #{e.to_s}"
                                     rescue SimpleLion::FilesystemException => e
