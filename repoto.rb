@@ -69,7 +69,7 @@ module Repoto
                     next
                 end
                 msg = la[3..-1].join(" ") if !la[3].nil?
-                if msg.nil?
+                if msg.nil? || msg.empty?
                     #puts "Message is nil!"
                     next
                 else
@@ -87,44 +87,44 @@ module Repoto
                         cmd = cmd.split(" ")
                         case cmd[0]
                         when "version"
-                            send_message_to_user usernick, "#{@loc.query "functions.version"} #{@version}"
+                            send_message_to_user usernick, "#{@loc.query("functions.version")} #{@version}"
                         when "creator"
-                            send_message_to_user usernick, "#{@loc.query "functions.creator"} #{@creator}"
+                            send_message_to_user usernick, "#{@loc.query("functions.creator")} #{@creator}"
                         when "operators"
-                            send_message_to_user usernick, "#{@loc.query "functions.operators"} #{@dynconfig[:operators].join(" ")}"
+                            send_message_to_user usernick, "#{@loc.query("functions.operators")} #{@dynconfig[:operators].join(" ")}"
                         when "exit"
                             if oper
-                                send_message_to_user usernick, @loc.query "functions.exit.channel"
-                                @conn.puts "QUIT :#{@loc.query "functions.exit.quit"}"
+                                send_message_to_user usernick, @loc.query("functions.exit.channel")
+                                @conn.puts "QUIT :#{@loc.query("functions.exit.quit")}"
                                 break
                             else
-                                send_message_to_user usernick, @loc.query "errors.not_authorized"
+                                send_message_to_user usernick, @loc.query("errors.not_authorized")
                             end
                         when "poke"
                             if cmd[1].nil?
-                                send_message_to_user usernick, @loc.query "functions.poke.question"
+                                send_message_to_user usernick, @loc.query("functions.poke.question")
                             else
-                                perform_action "#{@loc.query "functions.poke.msg1"} #{cmd[1]} #{@loc.query "functions.poke.msg2"} #{usernick}#{@loc.query "functions.poke.msg3"}"
+                                perform_action "#{@loc.query("functions.poke.msg1")} #{cmd[1]} #{@loc.query("functions.poke.msg2")} #{usernick}#{@loc.query("functions.poke.msg3")}"
                             end
                         when "kick"
                             if cmd[1].nil?
-                                send_message_to_user usernick, @loc.query "functions.kick.question"
+                                send_message_to_user usernick, @loc.query("functions.kick.question")
                             else
-                                perform_action "#{@loc.query "functions.kick.msg1"} #{cmd[1]} #{@loc.query "functions.poke.msg2"} #{usernick}#{@loc.query "functions.kick.msg3"}"
+                                perform_action "#{@loc.query("functions.kick.msg1")} #{cmd[1]} #{@loc.query("functions.poke.msg2")} #{usernick}#{@loc.query("functions.kick.msg3")}"
                             end
                         when "ping"
                             if cmd[1].nil?
-                                send_message_to_user usernick, @loc.query "functions.ping.question"
+                                send_message_to_user usernick, @loc.query("functions.ping.question")
                             else
-                                send_message_to_user cmd[1], "#{@loc.query "functions.ping.msg"} #{usernick}."
+                                send_message_to_user cmd[1], "#{@loc.query("functions.ping.msg")} #{usernick}."
                             end
                         when "addop"
                             if oper
                                 if !cmd[1].nil?
                                     @dynconfig[:operators] << cmd[1]
-                                    send_message_to_user cmd[1], "#{usernick} #{@loc.query "functions.operators"}"
+                                    send_message_to_user cmd[1], "#{usernick} #{@loc.query("functions.addop")}"
                                 else
-                                    send_message_to_user usernick, "#{@loc.query "usage"} ^addop user_nick"
+                                    send_message_to_user usernick, "#{@loc.query("usage")} ^addop user_nick"
                                 end
                             else
                                 send_message_to_user usernick, @loc.query("errors.not_authorized")
@@ -384,11 +384,11 @@ module Repoto
                         end
                     elsif msg[0..6] == "Repoto:"
                         content = msg[8..-1]
-                        if Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.name"))) && (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.your"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.please")))
+                        if Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.name"))) && (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.what"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.please"))))
                             send_message_to_user usernick, @loc.query("conv.name")
                         elsif Unicode.upcase(content) == Unicode.upcase(@loc.query("conv.keywords.ping"))
                             send_message_to_user usernick, "#{@loc.query("conv.pong")}."
-                        elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.what"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.up")))
+                        elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.what2"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.up")))
                             send_message_to_user usernick, @loc.query("conv.whats_up")
                         elsif Unicode.upcase(content)[0..1] == Unicode.upcase(@loc.query("conv.keywords.hi")) || Unicode.upcase(content)[0..2] == Unicode.upcase(@loc.query("conv.keywords.hey"))
                             send_message_to_user usernick, @loc.query("conv.hi")

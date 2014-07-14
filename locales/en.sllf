@@ -3,6 +3,10 @@ Usage:
 {errors}
 [not_authorized]
 You are not authorized!
+[no_command]
+I do not know this command!
+[connection]
+Connection error...
 {end}
 {functions}
 [version]
@@ -53,4 +57,166 @@ Custom commands:
 [no_commands]
 No custom commands yet!
 {end}
+{ac}
+[success]
+Custom command created!
+[command_name]
+command_name
+[command_output]
+command_output
+{end}
+{rc}
+[success]
+Custom command removed!
+[no_command]
+Could not find command!
+[command_name]
+command_name
+{end}
+{c}
+[no_command]
+Could not find this command, sorry...
+[question]
+Which command?
+{end}
+[enablehskrk]
+Hackerspace Kraków specific functions enabled!
+[disablehskrk]
+Hackerspace Kraków specific functions disabled!
+[enablemp]
+Maka Paka mode enabled!
+[disablemp]
+Maka Paka mode disabled!
+{whois}
+[in_hs]
+In HS:
+[devices]
+devices
+[unknown]
+unknown
+[users]
+Users:
+{end}
+[temp]
+Temperature in HS:
+{light}
+[no_lights]
+All lights in HS are off
+[lights_in_hs]
+Lights in HS:
+{end}
+[locale]
+Locale switched successfully!
+{restart}
+[channel]
+... restarting ...
+[quit]
+Exiting on operator' s request...
+{end}
+{end}
+{help}
+[no_command]
+I do not know how to do this...
+[available_commands]
+Available commands:
+[not_operator]
+I will not tell you, this is only for my operators.
+[version]
+I will print out my version.
+[creator]
+You will know who created me.
+[operators]
+You will know all of my operators.
+[poke]
+I will poke a user... but tell him that it was your request.
+[ping]
+I will ping a user... but tell him that it was your request.
+[kick]
+I will kick a user... but tell him that it was your request.
+[ac]
+I will add a custom command.
+[lc]
+I will list custom commands.
+[c]
+I will execute a custom command.
+[rc]
+I will remove a custom command.
+[whois]
+I will show you who is in Hackerspace Kraków.
+[temp]
+I will show you temperature in Hackerspace Kraków.
+[light]
+I will show you light status in Hackerspace Kraków.
+[exit]
+I will end my existence... for now.
+[restart]
+I will end my existence and then live again.
+[addop]
+I will add an operator.
+[dumpdyn]
+I will permanently save dynamic config.
+{end}
+{conv}
+{keywords}
+[name]
+name
+[ping]
+ping
+[what]
+what
+[please]
+please
+[what2]
+what
+[up]
+up
+[hi]
+hi
+[hey]
+hey
+[bye]
+bye
+[bot]
+bot
+[good]
+good
+[bad]
+bad
+[moron]
+moron
+[useless]
+useless
+[wat]
+WAT?
+[are]
+are
+[you]
+you
+[ok]
+OK
+[prefix]
+prefix
+{end}
+[name]
+My name is Repoto. Nice to meet you.
+[pong]
+Pong
+[whats_up]
+Everything' s fine, thank you.
+[hi]
+Hi, what' s up?
+[bye]
+Bye.
+[good_bot]
+Always at your service ;)
+[bad_bot]
+I was programmed that way :(
+[wat]
+Well, that' s how it is...
+[are_you_ok]
+Yes, I' m fine.
+[prefix]
+My command prefix is ^
+[generic]
+What?
 {end}
