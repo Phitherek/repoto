@@ -22,7 +22,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.6"
+            @version = "0.6.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -419,7 +419,7 @@ module Repoto
                         else
                             send_message_to_user usernick, @loc.query("conv.generic")
                         end
-                    elsif Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA") && @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on"
+                    elsif @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on" && Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA")
                         puts (oper ? "[oper]" : "") + usernick + ": " + msg
                         send_message "maka paka "*Random.new.rand(10..30)
                     else
