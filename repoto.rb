@@ -310,7 +310,7 @@ module Repoto
                             end
                         when "help"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^help, ^restart, ^exit"
+                                send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^locales, ^locale, ^help, ^restart, ^exit"
                             else
                                 case cmd[1]
                                 when "version"
@@ -372,6 +372,18 @@ module Repoto
                                 when "dumpdyn"
                                     if oper
                                         send_message_to_user usernick, @loc.query("help.dumpdyn")
+                                    else
+                                        send_message_to_user usernick, @loc.query("help.not_operator")
+                                    end
+                                when "locales"
+                                    if oper
+                                        send_message_to_user usernick, @loc.query("help.locales")
+                                    else
+                                        send_message_to_user usernick, @loc.query("help.not_operator")
+                                    end
+                                when "locale"
+                                    if oper
+                                        send_message_to_user usernick, @loc.query("help.locale")
                                     else
                                         send_message_to_user usernick, @loc.query("help.not_operator")
                                     end

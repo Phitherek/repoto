@@ -155,6 +155,10 @@ I will end my existence and then live again.
 I will add an operator.
 [dumpdyn]
 I will permanently save dynamic config.
+[locales]
+I will show you available locales.
+[locale]
+I will show you current locale or switch locale.
 {end}
 {conv}
 {keywords}
