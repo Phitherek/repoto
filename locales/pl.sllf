@@ -90,12 +90,30 @@ Wyłączono tryb Maka Paka!
 {whois}
 [in_hs]
 W HS:
-[devices]
-urządze(ń|nie|nia)
-[unknown]
-nieznan(e|ych)
+[devices0]
+urządzeń
+[devices1]
+urządzenie
+[devices24]
+urządzenia
+[devices59]
+urządzeń
+[devices1019]
+urządzeń
+[unknown0]
+nieznanych
+[unknown1]
+nieznane
+[unknown24]
+nieznane
+[unknown59]
+nieznanych
+[unknown1019]
+nieznanych
 [users]
 Użytkownicy:
+[no_users]
+Brak użytkowników.
 {end}
 [temp]
 Temperatura w HS:

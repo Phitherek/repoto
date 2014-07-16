@@ -90,12 +90,30 @@ Maka Paka mode disabled!
 {whois}
 [in_hs]
 In HS:
-[devices]
+[devices0]
 devices
-[unknown]
+[devices1]
+device
+[devices24]
+devices
+[devices59]
+devices
+[devices1019]
+devices
+[unknown0]
+unknown
+[unknown1]
+unknown
+[unknown24]
+unknown
+[unknown59]
+unknown
+[unknown1019]
 unknown
 [users]
 Users:
+[no_users]
+No users.
 {end}
 [temp]
 Temperature in HS:
