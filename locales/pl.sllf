@@ -137,6 +137,18 @@ Locale zmienione pomyślnie!
 [not_found]
 Nie mogłem znaleźć takiego locale!
 {end}
+{seen}
+[question]
+Który użytkownik?
+[user]
+Użytkownik
+[never]
+Nigdy nie widziałem użytkownika
+[now]
+jest na kanale w tym momencie.
+[last_seen]
+ostatnio był przeze mnie widziany:
+{end}
 {restart}
 [channel]
 ... restartowanie ...
@@ -195,6 +207,8 @@ Na stałe zapiszę dynamiczną konfigurację.
 Pokażę Ci dostępne locale.
 [locale]
 Pokażę Ci obecne locale lub je przełączę.
+[seen]
+Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
 {end}
 {conv}
 {keywords}

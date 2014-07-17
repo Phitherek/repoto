@@ -136,7 +136,19 @@ Lights in HS:
 Locale switched successfully!
 [not_found]
 I could not find such locale!
-{end}               
+{end}
+{seen}
+[question]
+Which user?
+[user]
+User
+[never]
+I have never seen user
+[now]
+is now on this channel.
+[last_seen]
+has last been seen on:
+{end}
 {restart}
 [channel]
 ... restarting ...
@@ -195,6 +207,8 @@ I will permanently save dynamic config.
 I will show you available locales.
 [locale]
 I will show you current locale or switch locale.
+[seen]
+I will show you when I have last seen given user.
 {end}
 {conv}
 {keywords}

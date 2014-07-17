@@ -5,6 +5,7 @@ require 'net/http'
 require 'json'
 require 'simplelion-ruby'
 require 'unicode'
+require_relative 'seen'
 
 module Repoto
     class Bot
@@ -22,12 +23,13 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.6.7"
+            @version = "0.7"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
             @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
             @imsg_enabled = false
+            @seen = Repoto::Seen.new
             
             puts "Connecting..."
             
@@ -65,12 +67,16 @@ module Repoto
                 end
                 if la[1] == "JOIN"
                     puts "*** #{usernick} has joined the channel."
+                    @seen.update usernick, :join
                     next
                 elsif la[1] == "PART" || la[1] == "QUIT"
                     puts "*** #{usernick} has left the channel."
+                    @seen.update usernick, :part
                     next
                 elsif la[1] != "PRIVMSG"
                     next
+                else
+                    @seen.update usernick, :join
                 end
                 if la[2] == @channel
                     #puts "Message is for the channel"
@@ -341,6 +347,19 @@ module Repoto
                             else
                                 send_message_to_user usernick, @loc.query("errors.not_authorized")
                             end
+                        when "seen"
+                            if !cmd[1].nil?
+                                seen = @seen.find cmd[1]
+                                if seen.nil?
+                                    send_message_to_user usernick, "#{@loc.query("functions.seen.never")} #{cmd[1]}"
+                                elsif seen == :now
+                                    send_message_to_user usernick, "#{@loc.query("functions.seen.user")} #{cmd[1]} #{@loc.query("functions.seen.now")}"
+                                else
+                                    send_message_to_user usernick, "#{@loc.query("functions.seen.user")} #{cmd[1]} #{@loc.query("functions.seen.last_seen")} #{seen}"
+                                end
+                            else
+                                send_message_to_user usernick, @loc.query("functions.seen.question")
+                            end
                         when "restart"
                             if oper
                                 send_message_to_user usernick, @loc.query("functions.restart.channel")
@@ -364,7 +383,7 @@ module Repoto
                             end
                         when "help"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^cu, ^cd, ^cr, ^dumpdyn, ^ping, ^poke, ^kick, ^locales, ^locale, ^help, ^restart, ^exit"
+                                send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^cu, ^cd, ^cr, ^dumpdyn, ^ping, ^poke, ^kick, ^locales, ^locale, ^seen, ^help, ^restart, ^exit"
                             else
                                 case cmd[1]
                                 when "version"
@@ -393,6 +412,8 @@ module Repoto
                                     send_message_to_user usernick, @loc.query("help.cd")
                                 when "cr"
                                     send_message_to_user usernick, @loc.query("help.cr")
+                                when "seen"
+                                    send_message_to_user usernick, @loc.query("help.seen")
                                 when "whois"
                                     if @dynconfig[:hskrk] == "on"
                                         send_message_to_user usernick, @loc.query("help.whois")
