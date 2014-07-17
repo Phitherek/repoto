@@ -355,7 +355,7 @@ module Repoto
                             end
                         when "help"
                             if cmd[1].nil?
-                                send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^dumpdyn, ^ping, ^poke, ^kick, ^locales, ^locale, ^help, ^restart, ^exit"
+                                send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^cu, ^cd, ^cr, ^dumpdyn, ^ping, ^poke, ^kick, ^locales, ^locale, ^help, ^restart, ^exit"
                             else
                                 case cmd[1]
                                 when "version"
