@@ -22,7 +22,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.6.6"
+            @version = "0.6.7"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -62,6 +62,15 @@ module Repoto
                 if @dynconfig[:operators].include?(usernick)
                     #puts "#{usernick} is an operator."
                     oper = true
+                end
+                if la[1] == "JOIN"
+                    puts "*** #{usernick} has joined the channel."
+                    next
+                elsif la[1] == "PART" || la[1] == "QUIT"
+                    puts "*** #{usernick} has left the channel."
+                    next
+                elsif la[1] != "PRIVMSG"
+                    next
                 end
                 if la[2] == @channel
                     #puts "Message is for the channel"
