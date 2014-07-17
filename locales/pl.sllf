@@ -149,6 +149,18 @@ jest na kanale w tym momencie.
 [last_seen]
 ostatnio był przeze mnie widziany:
 {end}
+{memo}
+[memo_from]
+Memo od
+[received]
+otrzymane
+[success]
+Memo dodane pomyślnie!
+[question_message]
+Co wysłać temu użytkownikowi?
+[question_user]
+Który użytkownik?
+{end}
 {restart}
 [channel]
 ... restartowanie ...

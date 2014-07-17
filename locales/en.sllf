@@ -149,6 +149,18 @@ is now on this channel.
 [last_seen]
 has last been seen on:
 {end}
+{memo}
+[memo_from]
+Memo from
+[received]
+received
+[success]
+Memo added successfully!
+[question_message]
+What to send to this user?
+[question_user]
+Which user?
+{end}
 {restart}
 [channel]
 ... restarting ...
@@ -209,6 +221,8 @@ I will show you available locales.
 I will show you current locale or switch locale.
 [seen]
 I will show you when I have last seen given user.
+[memo]
+I will leave a memo for a user and deliver it when the user arrives.
 {end}
 {conv}
 {keywords}
