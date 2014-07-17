@@ -24,7 +24,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.8"
+            @version = "0.8.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -67,10 +67,11 @@ module Repoto
                         #puts "#{usernick} is an operator."
                         oper = true
                     end
+                    skipparse = false
                     if la[1] == "JOIN"
                         puts "*** #{usernick} has joined the channel."
                         @seen.update usernick, :join
-                        next
+                        skipparse = true
                     elsif la[1] == "PART" || la[1] == "QUIT"
                         puts "*** #{usernick} has left the channel."
                         @seen.update usernick, :part
@@ -86,6 +87,9 @@ module Repoto
                             sleep(2)
                         end
                         @memo.delete_user_memos usernick
+                    end
+                    if skipparse
+                        next
                     end
                     if la[2] == @channel
                         #puts "Message is for the channel"
