@@ -78,6 +78,14 @@ nazwa_komendy
 Nie mogłem znaleźć tej komendy, wybacz...
 [question]
 Jaka komenda?
+{cr}
+[no_command]
+Nie mogłem znaleźć tej komendy, wybacz...
+[question]
+Jaka komenda?
+[how_many]
+Ile razy powtórzyć tą komendę?
+{end}
 {end}
 [enablehskrk]
 Włączono funkcje specyficzne dla Hackerspace Kraków!
@@ -163,6 +171,12 @@ Wypiszę niestandardowe komendy.
 Uruchomię niestandardową komendę.
 [rc]
 Usunę niestandardową komendę.
+[cu]
+Uruchomię niestandardową komendę zamieniając jej wyjście na wielkie litery.
+[cd]
+Uruchomię niestandardową komendę zamieniając jej wyjście na małe litery.
+[cr]
+Uruchomię niestandardową komendę podaną ilość razy.
 [whois]
 Pokażę Ci kto aktualnie jest w Hackerspace Kraków.
 [temp]

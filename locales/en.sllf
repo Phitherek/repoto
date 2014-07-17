@@ -79,6 +79,14 @@ Could not find this command, sorry...
 [question]
 Which command?
 {end}
+{cr}
+[no_command]
+Could not find this command, sorry...
+[question]
+Which command?
+[how_many]
+How many times to repeat this command?
+{end}
 [enablehskrk]
 Hackerspace Kraków specific functions enabled!
 [disablehskrk]
@@ -163,6 +171,12 @@ I will list custom commands.
 I will execute a custom command.
 [rc]
 I will remove a custom command.
+[cu]
+I will execute a custom command and upcase its output.
+[cd]
+I will execute a custom command and downcase its output.
+[cr]
+I will execute a custom command a given number of times.
 [whois]
 I will show you who is in Hackerspace Kraków.
 [temp]

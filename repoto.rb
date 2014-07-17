@@ -22,7 +22,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.6.5"
+            @version = "0.6.6"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -177,6 +177,43 @@ module Repoto
                                 end
                             else
                                 send_message_to_user usernick, @loc.query("functions.c.question")
+                            end
+                        when "cu"
+                            if !cmd[1].nil?
+                                if !@dynconfig[:c].nil? && !@dynconfig[:c][cmd[1].to_sym].nil?
+                                    send_message Unicode.upcase(@dynconfig[:c][cmd[1].to_sym].to_s.force_encoding("utf-8"))
+                                else
+                                    send_message_to_user usernick, @loc.query("functions.c.no_command")
+                                end
+                            else
+                                send_message_to_user usernick, @loc.query("functions.c.question")
+                            end
+                        when "cd"
+                            if !cmd[1].nil?
+                                if !@dynconfig[:c].nil? && !@dynconfig[:c][cmd[1].to_sym].nil?
+                                    send_message Unicode.downcase(@dynconfig[:c][cmd[1].to_sym].to_s.force_encoding("utf-8"))
+                                else
+                                    send_message_to_user usernick, @loc.query("functions.c.no_command")
+                                end
+                            else
+                                send_message_to_user usernick, @loc.query("functions.c.question")
+                            end
+                        when "cr"
+                            if !cmd[1].nil?
+                                if !@dynconfig[:c].nil? && !@dynconfig[:c][cmd[1].to_sym].nil?
+                                    if !cmd[2].nil?
+                                        cmd[2].to_i.times do
+                                            send_message @dynconfig[:c][cmd[1].to_sym].to_s
+                                            sleep 2
+                                        end
+                                    else
+                                      send_message_to_user usernick, @loc.query("functions.cr.how_many")  
+                                    end
+                                else
+                                    send_message_to_user usernick, @loc.query("functions.cr.no_command")
+                                end
+                            else
+                                send_message_to_user usernick, @loc.query("functions.cr.question")
                             end
                         when "enablehskrk"
                             if oper
@@ -341,6 +378,12 @@ module Repoto
                                     send_message_to_user usernick, @loc.query("help.c")
                                 when "rc"
                                     send_message_to_user usernick, @loc.query("help.rc")
+                                when "cu"
+                                    send_message_to_user usernick, @loc.query("help.cu")
+                                when "cd"
+                                    send_message_to_user usernick, @loc.query("help.cd")
+                                when "cr"
+                                    send_message_to_user usernick, @loc.query("help.cr")
                                 when "whois"
                                     if @dynconfig[:hskrk] == "on"
                                         send_message_to_user usernick, @loc.query("help.whois")
