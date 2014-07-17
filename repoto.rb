@@ -7,6 +7,7 @@ require 'simplelion-ruby'
 require 'unicode'
 require_relative 'seen'
 require_relative 'memo'
+require_relative 'saves'
 
 module Repoto
     class Bot
@@ -24,7 +25,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.8.1"
+            @version = "0.9"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -32,6 +33,7 @@ module Repoto
             @imsg_enabled = false
             @seen = Repoto::Seen.new
             @memo = Repoto::Memo.new
+            @saves = Repoto::Saves.new
             
             puts "Connecting..."
             
@@ -70,10 +72,12 @@ module Repoto
                     skipparse = false
                     if la[1] == "JOIN"
                         puts "*** #{usernick} has joined the channel."
+                        @saves.log "*** #{usernick} has joined the channel."
                         @seen.update usernick, :join
                         skipparse = true
                     elsif la[1] == "PART" || la[1] == "QUIT"
                         puts "*** #{usernick} has left the channel."
+                        @saves.log "*** #{usernick} has left the channel."
                         @seen.update usernick, :part
                         next
                     elsif la[1] != "PRIVMSG"
@@ -386,6 +390,9 @@ module Repoto
                                 else
                                     send_message_to_user usernick, @loc.query("functions.memo.question_user")
                                 end
+                            when "save"
+                                @saves.save usernick
+                                send_message_to_user usernick, @loc.query("functions.save")
                             when "restart"
                                 if oper
                                     send_message_to_user usernick, @loc.query("functions.restart.channel")
@@ -409,7 +416,7 @@ module Repoto
                                 end
                             when "help"
                                 if cmd[1].nil?
-                                    send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^cu, ^cd, ^cr, ^dumpdyn, ^ping, ^poke, ^kick, ^locales, ^locale, ^seen, ^memo, ^help, ^restart, ^exit"
+                                    send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^cu, ^cd, ^cr, ^dumpdyn, ^ping, ^poke, ^kick, ^locales, ^locale, ^seen, ^memo, ^save, ^help, ^restart, ^exit"
                                 else
                                     case cmd[1]
                                     when "version"
@@ -442,6 +449,8 @@ module Repoto
                                         send_message_to_user usernick, @loc.query("help.seen")
                                     when "memo"
                                         send_message_to_user usernick, @loc.query("help.memo")
+                                    when "save"
+                                        send_message_to_user usernick, @loc.query("help.save")
                                     when "whois"
                                         if @dynconfig[:hskrk] == "on"
                                             send_message_to_user usernick, @loc.query("help.whois")
@@ -531,17 +540,23 @@ module Repoto
                         elsif @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on" && Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA")
                             if msg.split(" ").first == "\001ACTION"
                                 msg["ACTION"] = (oper ? "[oper]" : "") + usernick
+                                msg.gsub!("\001", "")
                                 puts msg
+                                @saves.log msg
                             else
                                 puts (oper ? "[oper]" : "") + usernick + ": " + msg
+                                @saves.log (oper ? "[oper]" : "") + usernick + ": " + msg
                             end
                             send_message "maka paka "*Random.new.rand(10..30)
                         else
                             if msg.split(" ").first == "\001ACTION"
                                 msg["ACTION"] = (oper ? "[oper]" : "") + usernick
+                                msg.gsub!("\001", "")
                                 puts msg
+                                @saves.log msg
                             else
                                 puts (oper ? "[oper]" : "") + usernick + ": " + msg
+                                @saves.log (oper ? "[oper]" : "") + usernick + ": " + msg
                             end
                         end
                     end

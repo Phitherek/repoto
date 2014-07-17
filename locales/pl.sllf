@@ -161,6 +161,8 @@ Co wysłać temu użytkownikowi?
 [question_user]
 Który użytkownik?
 {end}
+[save]
+Zapisałem pomyślnie!
 {restart}
 [channel]
 ... restartowanie ...
@@ -221,6 +223,8 @@ Pokażę Ci dostępne locale.
 Pokażę Ci obecne locale lub je przełączę.
 [seen]
 Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
+[save]
+Zapiszę ostatnie 30 linijek logu kanału.
 {end}
 {conv}
 {keywords}
