@@ -25,7 +25,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "0.9"
+            @version = "0.9.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -79,6 +79,28 @@ module Repoto
                         puts "*** #{usernick} has left the channel."
                         @saves.log "*** #{usernick} has left the channel."
                         @seen.update usernick, :part
+                        next
+                    elsif la[1] == "KICK"
+                        usernick = la[3]
+                        puts "*** #{usernick} has been kicked from the channel."
+                        @saves.log "*** #{usernick} has left the channel."
+                        @seen.update usernick, :part
+                        if usernick == "#{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
+                            @conn.close
+                            sleep 5
+                            if File.exists?("config.yml")
+                                @config = YAML.load_file("config.yml")
+                            else
+                                raise "Could not read config!"
+                            end
+                            if File.exists?("dynconfig.yml")
+                                @dynconfig = YAML.load_file("dynconfig.yml")
+                            else
+                                @dynconfig = {}
+                            end
+                            @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
+                            connect
+                        end
                         next
                     elsif la[1] != "PRIVMSG"
                         next
