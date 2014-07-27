@@ -163,6 +163,16 @@ Który użytkownik?
 {end}
 [save]
 Zapisałem pomyślnie!
+{remind}
+[reminder_for]
+Przypomnienie na
+[success]
+Przypomnienie stworzone pomyślnie!
+[question_message]
+O czym przypomnieć?
+[question_time]
+Kiedy Ci o tym przypomnieć?
+{end}
 {restart}
 [channel]
 ... restartowanie ...
@@ -223,6 +233,8 @@ Pokażę Ci dostępne locale.
 Pokażę Ci obecne locale lub je przełączę.
 [seen]
 Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
+[remind]
+Stworzę przypomnienie i przypomnę Ci o czymś w jakimś czasie.
 [save]
 Zapiszę ostatnie 30 linijek logu kanału.
 {end}

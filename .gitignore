@@ -6,3 +6,4 @@ config.yml
 seendata.yml
 memodata.yml
 saves.yml
+reminders.yml
