@@ -234,7 +234,7 @@ Pokażę Ci obecne locale lub je przełączę.
 [seen]
 Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
 [remind]
-Stworzę przypomnienie i przypomnę Ci o czymś w jakimś czasie.
+Stworzę przypomnienie i przypomnę Ci o czymś w jakimś czasie. Użycie: ^remind (data czas lub data lub czas)|wiadomość
 [save]
 Zapiszę ostatnie 30 linijek logu kanału.
 {end}

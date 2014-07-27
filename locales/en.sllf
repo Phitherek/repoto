@@ -236,7 +236,7 @@ I will show you when I have last seen given user.
 [memo]
 I will leave a memo for a user and deliver it when the user arrives.
 [remind]
-I will create a reminder and remind you at specific time about something.
+I will create a reminder and remind you at specific time about something. Usage: ^remind (date time or date or time)|message
 [save]
 I will save last 30 lines of channel log.
 {end}

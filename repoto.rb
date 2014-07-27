@@ -27,7 +27,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.0"
+            @version = "1.0.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -426,10 +426,25 @@ module Repoto
                                     send_message_to_user usernick, @loc.query("functions.memo.question_user")
                                 end
                             when "remind"
-                                if !cmd[1].nil?
-                                    if !cmd[2].nil?
+                                pcmd = cmd[1..-1].join(" ")
+                                time = ""
+                                msg = ""
+                                ps = :time
+                                pcmd.each_char do |c|
+                                    if c == '|'
+                                        ps = :msg
+                                        next
+                                    end
+                                    if ps == :time
+                                        time += c
+                                    elsif ps == :msg
+                                        msg += c
+                                    end
+                                end
+                                if !time.empty?
+                                    if !msg.empty?
                                         begin
-                                            @reminder.create usernick, Time.parse(cmd[1]), cmd[2..-1].join(" ")
+                                            @reminder.create usernick, Time.parse(time), msg
                                             send_message_to_user usernick, @loc.query("functions.remind.success")
                                         rescue => e
                                             send_message_to_user usernick, "Exception! -> " + e.to_s
