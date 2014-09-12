@@ -27,7 +27,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.0.1"
+            @version = "1.0.2"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
