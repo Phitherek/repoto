@@ -27,7 +27,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.1"
+            @version = "1.1.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -581,8 +581,9 @@ module Repoto
                                 else                                          
                                    send_message_to_user usernick, @loc.query("errors.no_command")
                                 end
-                            elsif msg[0..6] == "Repoto:"
-                                content = msg[8..-1]
+                            elsif msg[0..5] == "Repoto"
+                                content = msg
+                                content[/Repoto.*: /] = ""
                                 if Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.name"))) && (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.what"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.please"))))
                                     send_message_to_user usernick, @loc.query("conv.name")
                                 elsif Unicode.upcase(content) == Unicode.upcase(@loc.query("conv.keywords.ping"))
