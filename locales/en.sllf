@@ -303,4 +303,6 @@ Yes, I' m fine.
 My command prefix is ^
 [generic]
 What?
+[utf8]
+Use UTF-8. Or die. Please.
 {end}

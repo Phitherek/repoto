@@ -302,3 +302,7 @@ Mój prefiks do komend do ^
 [generic]
 Co?
 {end}
+{misc}
+[utf8]
+Używaj UTF-8. Lub giń. Proszę.
+{end}
