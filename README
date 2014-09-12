@@ -4,6 +4,10 @@ Current functionality:
 - Some fun commands and responses
 - Ability to create and save custom commands
 - Operator authentication
+- Saves
+- Memos
+- Reminders
+- Seen
 
 Running:
 - Create config.yml
