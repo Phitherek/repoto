@@ -2,3 +2,4 @@
 :port: <your-IRC-port>
 :channel: <your-IRC-channel-without-#>
 :suffix: <bot-nickname-suffix>
+:prefix: <command-prefix>

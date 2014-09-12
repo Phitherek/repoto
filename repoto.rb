@@ -27,10 +27,11 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.0.2"
+            @version = "1.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
+            @prefix = @config[:prefix]
             @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
             @imsg_enabled = false
             @seen = Repoto::Seen.new
@@ -153,7 +154,7 @@ module Repoto
                             if msg.nil? || msg.empty?
                                 next
                             end
-                            if msg[0] == "^" && msg[1] != "^" && msg[1] != "_" && msg[1] != " " && msg[1] != "\n" && msg[1] != nil
+                            if msg[0] == @prefix && msg[1] != @prefix && msg[1] != "_" && msg[1] != " " && msg[1] != "\n" && msg[1] != nil
                                 cmd = msg[1..-1]
                                 cmd = cmd.split(" ")
                                 case cmd[0]
@@ -198,7 +199,7 @@ module Repoto
                                             @dynconfig[:operators] << cmd[1]
                                             send_message_to_user cmd[1], "#{usernick} #{@loc.query("functions.addop")}"
                                         else
-                                            send_message_to_user usernick, "#{@loc.query("usage")} ^addop user_nick"
+                                            send_message_to_user usernick, "#{@loc.query("usage")} #{@prefix}addop user_nick"
                                         end
                                     else
                                         send_message_to_user usernick, @loc.query("errors.not_authorized")
@@ -225,7 +226,7 @@ module Repoto
                                         @dynconfig[:c][cmd[1].to_sym] = cmd[2..-1].join(" ").to_s
                                         send_message_to_user usernick, @loc.query("functions.ac.success")
                                     else
-                                        send_message_to_user usernick, "#{@loc.query("usage")} ac #{@loc.query("functions.ac.command_name")} #{@loc.query("functions.ac.command_output")}"
+                                        send_message_to_user usernick, "#{@loc.query("usage")} #{@prefix}ac #{@loc.query("functions.ac.command_name")} #{@loc.query("functions.ac.command_output")}"
                                     end
                                 when "rc"
                                     if !cmd[1].nil?
@@ -236,7 +237,7 @@ module Repoto
                                             send_message_to_user usernick, @loc.query("functions.rc.no_command")
                                         end
                                     else
-                                        send_message_to_user usernick, "#{@loc.query "usage"} rc #{@loc.query("functions.rc.command_name")}"
+                                        send_message_to_user usernick, "#{@loc.query "usage"} #{@prefix}rc #{@loc.query("functions.rc.command_name")}"
                                     end
                                 when "c"
                                     if !cmd[1].nil?
@@ -383,7 +384,7 @@ module Repoto
                                     if oper
                                         if cmd[1].nil?
                                             send_message_to_user usernick, "Current locale: #{@dynconfig[:locale]}"
-                                            send_message_to_user usernick, "Usage: ^locale locale_to_switch_to"
+                                            send_message_to_user usernick, "Usage: #{@prefix}locale locale_to_switch_to"
                                         else
                                             begin
                                                 if @loc.localeList.include?(cmd[1])
@@ -482,7 +483,7 @@ module Repoto
                                     end
                                 when "help"
                                     if cmd[1].nil?
-                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} ^version, ^creator, ^operators, ^addop,#{@dynconfig[:hskrk] == "on" ? " ^whois, ^temp, ^light," : ""} ^ac, ^lc, ^rc, ^c, ^cu, ^cd, ^cr, ^dumpdyn, ^ping, ^poke, ^kick, ^locales, ^locale, ^seen, ^memo, ^remind, ^save, ^help, ^restart, ^exit"
+                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}save, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
                                     else
                                         case cmd[1]
                                         when "version"
@@ -601,7 +602,7 @@ module Repoto
                                 elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.are"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.you"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.ok")))
                                     send_message_to_user usernick, @loc.query("conv.are_you_ok")
                                 elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.prefix")))
-                                    send_message_to_user usernick, @loc.query("conv.prefix")
+                                    send_message_to_user usernick, @loc.query("conv.prefix") + " " + @prefix
                                 else
                                     send_message_to_user usernick, @loc.query("conv.generic")
                                 end
