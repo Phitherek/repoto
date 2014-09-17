@@ -3,3 +3,6 @@
 :channel: <your-IRC-channel-without-#>
 :suffix: <bot-nickname-suffix>
 :prefix: <command-prefix>
+:redmine_enabled: <true-or-false>
+:redmine_url: <redmine-url>
+:redmine_api_key: <your-redmine-api-key>

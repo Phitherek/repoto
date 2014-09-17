@@ -306,3 +306,27 @@ Co?
 [utf8]
 Używaj UTF-8. Lub giń. Proszę.
 {end}
+    {redmine}
+[title]
+Redmine:
+[issue_url]
+URL zagadnienia:
+[query_error]
+Zapytanie do Redmine zwróciło:
+[issue_data]
+Dane zagadnienia:
+[issue_subject]
+Temat:
+[issue_tracker]
+Typ:
+[issue_project]
+Projekt:
+[issue_author]
+Autor:
+[issue_assignee]
+Odpowiedzialny:
+[issue_status]
+Stan:
+[issue_done]
+% wykonano:
+{end}

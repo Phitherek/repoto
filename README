@@ -8,6 +8,7 @@ Current functionality:
 - Memos
 - Reminders
 - Seen
+- Redmine issues - if you type redmine:#<issue-nr> in the message with Redmine configuration enabled, Repoto, if connection succeeds, will output issue URL and data: subject, tracker, project, author, assignee, status and % done. If connection does not succeed, it will output the HTTP response.
 
 Running:
 - Create config.yml

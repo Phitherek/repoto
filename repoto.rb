@@ -10,6 +10,7 @@ require_relative 'seen'
 require_relative 'memo'
 require_relative 'saves'
 require_relative 'reminder'
+require_relative 'redmine'
 
 module Repoto
     class Bot
@@ -27,7 +28,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.1.1"
+            @version = "1.2"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -38,6 +39,9 @@ module Repoto
             @memo = Repoto::Memo.new
             @saves = Repoto::Saves.new
             @reminder = Repoto::Reminder.new
+            if @config[:redmine_enabled]
+                @redmine = Repoto::Redmine.new(@config[:redmine_url], @config[:redmine_api_key])
+            end
             
             puts "Connecting..."
             
@@ -628,6 +632,38 @@ module Repoto
                                     puts (oper ? "[oper]" : "") + usernick + ": " + msg
                                     @saves.log (oper ? "[oper]" : "") + usernick + ": " + msg
                                 end
+                            end
+                        end
+                        if @config[:redmine_enabled] && msg[/redmine:#[0-9]+/] != nil
+                            begin
+                                msg.scan(/redmine:#[0-9]+/).each do |s|
+                                    nr = s.gsub("redmine:#", "").to_i
+                                    idata = @redmine.issue_data nr
+                                    if idata.kind_of?(Hash)
+                                        send_message @loc.query("redmine.title") + " " + @loc.query("redmine.issue_url") + " " + @redmine.issue_url(nr)
+                                        sleep(1)
+                                        send_message @loc.query("redmine.issue_data")
+                                        sleep(1)
+                                        send_message @loc.query("redmine.issue_subject") + " " + idata["issue"]["subject"]
+                                        sleep(1)
+                                        send_message @loc.query("redmine.issue_tracker") + " " + idata["issue"]["tracker"]["name"]
+                                        sleep(1)
+                                        send_message @loc.query("redmine.issue_project") + " " + idata["issue"]["project"]["name"]
+                                        sleep(1)
+                                        send_message @loc.query("redmine.issue_author") + " " + idata["issue"]["author"]["name"]
+                                        sleep(1)
+                                        send_message @loc.query("redmine.issue_assignee") + " " + idata["issue"]["assigned_to"]["name"]
+                                        sleep(1)
+                                        send_message @loc.query("redmine.issue_status") + " " + idata["issue"]["status"]["name"]
+                                        sleep(1)
+                                        send_message @loc.query("redmine.issue_done") + " " + idata["issue"]["done_ratio"].to_s
+                                        sleep(1)
+                                    else
+                                        send_message @loc.query("redmine.query_error") + " " + idata
+                                    end
+                                end
+                            rescue => e
+                                send_message @loc.query("redmine.query_error") + " " + e.to_s
                             end
                         end
                     rescue Exception => e

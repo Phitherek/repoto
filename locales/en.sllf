@@ -303,6 +303,32 @@ Yes, I' m fine.
 My command prefix is 
 [generic]
 What?
+{end}
+{misc}
 [utf8]
 Use UTF-8. Or die. Please.
+{end}
+{redmine}
+[title]
+Redmine:
+[issue_url]
+Issue URL:
+[query_error]
+Redmine query returned:
+[issue_data]
+Issue data:
+[issue_subject]
+Subject:
+[issue_tracker]
+Tracker:
+[issue_project]
+Project:
+[issue_author]
+Author:
+[issue_assignee]
+Assignee:
+[issue_status]
+Status:
+[issue_done]
+% Done:
 {end}
