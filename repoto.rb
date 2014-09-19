@@ -28,7 +28,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.2"
+            @version = "1.3"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -42,6 +42,10 @@ module Repoto
             if @config[:redmine_enabled]
                 @redmine = Repoto::Redmine.new(@config[:redmine_url], @config[:redmine_api_key])
             end
+            if @config[:debug_log_enabled]
+                @dlog = File.open(@config[:debug_log_path], "a")
+                puts "Opened debug log..."
+            end
             
             puts "Connecting..."
             
@@ -52,10 +56,11 @@ module Repoto
                         oper = false
                         auth = false
                         line.force_encoding 'utf-8'
-                        #puts "SERVER: " + line
+                        dlog_server line
                         la = line.split(" ")
                         if la[0] == "PING"
                             puts "Ping-pong..."
+                            dlog_bot "PONG #{la[1]}"
                             @conn.puts "PONG #{la[1]}"
                         end
                         if la[0][0] == ":"
@@ -694,18 +699,24 @@ module Repoto
         def connect
             @conn = TCPSocket.new @server, @port
             puts "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
+            dlog_bot "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
             @conn.puts "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
             puts "USER #{@nick.downcase}#{!@suffix.nil? ? "-#{@suffix.downcase}" : ""} 8 * :#{@nick}"
+            dlog_bot "USER #{@nick.downcase}#{!@suffix.nil? ? "-#{@suffix.downcase}" : ""} 8 * :#{@nick}"
             @conn.puts "USER #{@nick.downcase}#{!@suffix.nil? ? "-#{@suffix.downcase}" : ""} 8 * :#{@nick}"
             puts "CAP REQ identify-msg"
+            dlog_bot "CAP REQ identify-msg"
             @conn.puts "CAP REQ identify-msg"
             puts "CAP END"
+            dlog_bot "CAP END"
             @conn.puts "CAP END"
             puts "JOIN :#{@channel}"
+            dlog_bot "JOIN :#{@channel}"
             @conn.puts "JOIN :#{@channel}"
         end
         
         def send_message msg
+            dlog_bot "PRIVMSG #{@channel} :#{msg}"
             @conn.puts "PRIVMSG #{@channel} :#{msg}"
         end
         
@@ -715,6 +726,18 @@ module Repoto
         
         def perform_action msg
             send_message "\001ACTION #{msg}\001"
+        end
+        
+        def dlog_server msg
+            if @config[:debug_log_enabled]
+                @dlog.puts "[" + Time.now.to_s + "] SERVER: " + msg 
+            end
+        end
+        
+        def dlog_bot msg
+            if @config[:debug_log_enabled]
+                @dlog.puts "[" + Time.now.to_s + "] BOT: " + msg
+            end
         end
     end
 end
