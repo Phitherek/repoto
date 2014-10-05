@@ -28,7 +28,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.3"
+            @version = "1.4"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -63,6 +63,31 @@ module Repoto
                             dlog_bot "PONG #{la[1]}"
                             @conn.puts "PONG #{la[1]}"
                         end
+                        if la[0] == "ERROR"
+                            puts "Server error - restarting..."
+                            puts "Closing connection..."
+                            @conn.close
+                            puts "Dumping seen data..."
+                            @seen.dump
+                            puts "Dumping memo data..."
+                            @memo.dump
+                            puts "Dumping reminders..."
+                            @reminder.dump
+                            sleep 5
+                            puts "Reconnecting..."
+                            if File.exists?("config.yml")
+                                @config = YAML.load_file("config.yml")
+                            else
+                                raise "Could not read config!"
+                            end
+                            if File.exists?("dynconfig.yml")
+                                @dynconfig = YAML.load_file("dynconfig.yml")
+                            else
+                                @dynconfig = {}
+                            end
+                            @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
+                            connect
+                        end
                         if la[0][0] == ":"
                             if la[1] == "CAP" && la[2] == "#{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}" && la[3] == "ACK" && la[4] == ":identify-msg"
                                 @imsg_enabled = true
@@ -90,10 +115,37 @@ module Repoto
                             @seen.update usernick, :join
                             skipparse = true
                         elsif la[1] == "PART" || la[1] == "QUIT"
-                            puts "*** #{usernick} has left the channel."
-                            @saves.log "*** #{usernick} has left the channel."
-                            @seen.update usernick, :part
-                            next
+                            if usernick == "#{@nick}|#{@suffix}" && Unicode.upcase(la[3]).include?("PING TIMEOUT")
+                                puts "Ping timeout - restarting..."
+                                puts "Closing connection..."
+                                @conn.close
+                                puts "Dumping seen data..."
+                                @seen.dump
+                                puts "Dumping memo data..."                
+                                @memo.dump
+                                puts "Dumping reminders..."
+                                @reminder.dump
+                                sleep 5
+                                puts "Reconnecting..."
+                                if File.exists?("config.yml")
+                                    @config = YAML.load_file("config.yml")
+                                else
+                                    raise "Could not read config!"
+                                end
+                                if File.exists?("dynconfig.yml")
+                                    @dynconfig = YAML.load_file("dynconfig.yml")
+                                else
+                                    @dynconfig = {}
+                                end
+                                @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
+                                connect
+                                next
+                            else
+                                puts "*** #{usernick} has left the channel."
+                                @saves.log "*** #{usernick} has left the channel."
+                                @seen.update usernick, :part
+                                next
+                            end
                         elsif la[1] == "KICK"
                             usernick = la[3]
                             puts "*** #{usernick} has been kicked from the channel."
@@ -473,7 +525,15 @@ module Repoto
                                     if oper
                                         send_message_to_user usernick, @loc.query("functions.restart.channel")
                                         @conn.puts "QUIT :#{@loc.query("functions.restart.quit")}"
+                                        puts "Restarting on operators' request..."
+                                        puts "Closing connection..."
                                         @conn.close
+                                        puts "Dumping seen data..."
+                                        @seen.dump
+                                        puts "Dumping memo data..."                
+                                        @memo.dump
+                                        puts "Dumping reminders..."
+                                        @reminder.dump
                                         sleep 5
                                         if File.exists?("config.yml")
                                             @config = YAML.load_file("config.yml")
