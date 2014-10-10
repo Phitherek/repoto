@@ -8,3 +8,5 @@
 :redmine_api_key: <your-redmine-api-key>
 :debug_log_enabled: <true-or-false>
 :debug_log_path: <path-to-debug-log-file>
+:github_enabled: <true-or-false>
+:github_access_key: <your-github-access-key>

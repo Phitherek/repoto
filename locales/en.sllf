@@ -21,6 +21,16 @@ Bye!
 [quit]
 Exiting on operator' s request...
 {end}
+{issues}
+[new_issue_url]
+New issue URL:
+[http_error_code]
+HTTP error code:
+[subject_missing]
+Issue subject is required!
+[unknown_command]
+Unknown issues subcommand!
+{end}
 {poke}
 [question]
 Who to poke?
@@ -213,6 +223,8 @@ I will execute a custom command and upcase its output.
 I will execute a custom command and downcase its output.
 [cr]
 I will execute a custom command a given number of times.
+[issues]
+I will show you my issue URL or add an issue if I receive add subcommand.
 [whois]
 I will show you who is in Hackerspace Kraków.
 [temp]

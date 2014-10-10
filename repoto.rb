@@ -11,6 +11,7 @@ require_relative 'memo'
 require_relative 'saves'
 require_relative 'reminder'
 require_relative 'redmine'
+require_relative 'github'
 
 module Repoto
     class Bot
@@ -28,7 +29,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.4.1"
+            @version = "1.5"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -39,6 +40,14 @@ module Repoto
             @memo = Repoto::Memo.new
             @saves = Repoto::Saves.new
             @reminder = Repoto::Reminder.new
+            if @config[:github_enabled]
+                @github = Repoto::Github.new(@config[:github_access_key])
+                if @github.connection?
+                    puts "GitHub connection successful!"
+                else
+                    puts "GitHub connection failed!"
+                end
+            end
             if @config[:redmine_enabled]
                 @redmine = Repoto::Redmine.new(@config[:redmine_url], @config[:redmine_api_key])
             end
@@ -347,6 +356,26 @@ module Repoto
                                     else
                                         send_message_to_user usernick, @loc.query("functions.cr.question")
                                     end
+                                when "issues"
+                                    if cmd[1].nil?
+                                        send_message_to_user usernick, @github.issues_url
+                                    else
+                                        if cmd[1] == "add"
+                                            if !cmd[2].nil?
+                                                subject = cmd[2..-1].join(" ")
+                                                res = @github.add_issue(@config[:channel], usernick, subject)
+                                                if res.kind_of?(String)
+                                                    send_message_to_user usernick, @loc.query("functions.issues.new_issue_url") + " " + res
+                                                else
+                                                    send_message_to_user usernick, @loc.query("functions.issues.http_error_code") + " " + res.to_s
+                                                end
+                                            else
+                                                send_message_to_user usernick, @loc.query("functions.issues.subject_missing")
+                                            end
+                                        else
+                                            send_message_to_user usernick, @loc.query("functions.issues.unknown_command")
+                                        end
+                                    end
                                 when "enablehskrk"
                                     if oper
                                         @dynconfig[:hskrk] = "on"
@@ -555,7 +584,7 @@ module Repoto
                                     end
                                 when "help"
                                     if cmd[1].nil?
-                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}save, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
+                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}issues, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}save, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
                                     else
                                         case cmd[1]
                                         when "version"
@@ -592,6 +621,8 @@ module Repoto
                                             send_message_to_user usernick, @loc.query("help.remind")
                                         when "save"
                                             send_message_to_user usernick, @loc.query("help.save")
+                                        when "issues"
+                                            send_message_to_user usernick, @loc.query("help.issues")
                                         when "whois"
                                             if @dynconfig[:hskrk] == "on"
                                                 send_message_to_user usernick, @loc.query("help.whois")

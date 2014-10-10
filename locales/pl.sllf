@@ -21,6 +21,16 @@ Na razie!
 [quit]
 Wychodzę na zlecenie operatora...
 {end}
+{issues}
+[new_issue_url]
+URL nowego zagadnienia:
+[http_error_code]
+Kod błędu HTTP:
+[subject_missing]
+Wymagany jest temat zagadnienia!
+[unknown_command]
+Nieznana podkomenda issues!
+{end}
 {poke}
 [question]
 Kogo zaczepić?
@@ -213,6 +223,8 @@ Uruchomię niestandardową komendę zamieniając jej wyjście na wielkie litery.
 Uruchomię niestandardową komendę zamieniając jej wyjście na małe litery.
 [cr]
 Uruchomię niestandardową komendę podaną ilość razy.
+[issues]
+Pokażę Ci URL do moich zagadnień lub dodam zagadnienie jeżeli dostanę subkomendę add.
 [whois]
 Pokażę Ci kto aktualnie jest w Hackerspace Kraków.
 [temp]
