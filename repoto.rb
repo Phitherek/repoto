@@ -28,7 +28,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.4"
+            @version = "1.4.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -388,6 +388,9 @@ module Repoto
                                         data = Net::HTTP.get("whois.hskrk.pl", "/whois")
                                         if !data.nil?
                                             data = JSON.parse(data)
+                                            data["users"].each  do |u|
+                                                u.insert(u.length/2, "\u200e")
+                                            end
                                             send_message_to_user usernick, "#{@loc.query("functions.whois.in_hs")} #{data["total_devices_count"]} #{data["total_devices_count"].to_s.length == 1 ? (data["total_devices_count"].to_i == 0 ? @loc.query("functions.whois.devices0") : (data["total_devices_count"].to_i == 1 ? @loc.query("functions.whois.devices1") : ((data["total_devices_count"].to_i > 1 && data["total_devices_count"].to_i < 5) ? (@loc.query("functions.whois.devices24")) : (@loc.query("functions.whois.devices59"))))) : (data["total_devices_count"].to_s[-2].to_i == 1 ? (@loc.query("functions.whois.devices1019")) : ((data["total_devices_count"].to_s[-1].to_i > 1 && data["total_devices_count"].to_s[-1].to_i < 5) ? @loc.query("functions.whois.devices24") : @loc.query("functions.whois.devices59")))}, #{data["unknown_devices_count"]} #{data["unknown_devices_count"].to_s.length == 1 ? (data["unknown_devices_count"].to_i == 0 ? @loc.query("functions.whois.unknown0") : (data["unknown_devices_count"].to_i == 1 ? @loc.query("functions.whois.unknown1") : ((data["unknown_devices_count"].to_i > 1 && data["unknown_devices_count"].to_i < 5) ? (@loc.query("functions.whois.unknown24")) : (@loc.query("functions.whois.unknown59"))))) : (data["unknown_devices_count"].to_s[-2].to_i == 1 ? (@loc.query("functions.whois.unknown1019")) : ((data["unknown_devices_count"].to_s[-1].to_i > 1 && data["unknown_devices_count"].to_s[-1].to_i < 5) ? @loc.query("functions.whois.unknown24") : @loc.query("functions.whois.unknown59")))}. #{data["users"].empty? ? @loc.query("functions.whois.no_users") : @loc.query("functions.whois.users")} #{data["users"].join(", ")}"
                                         else
                                             send_message_to_user usernick, @loc.query("errors.connection")
