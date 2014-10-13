@@ -29,13 +29,14 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "1.5"
+            @version = "2.0"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
             @prefix = @config[:prefix]
             @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
             @imsg_enabled = false
+            @nickserv_present = true
             @seen = Repoto::Seen.new
             @memo = Repoto::Memo.new
             @saves = Repoto::Saves.new
@@ -67,6 +68,10 @@ module Repoto
                         line.force_encoding 'utf-8'
                         dlog_server line
                         la = line.split(" ")
+                        if la[0][0] == ":" && la[1] == "001"
+                            join_channel
+                            send_nickserv_check
+                        end
                         if la[0] == "PING"
                             puts "Ping-pong..."
                             dlog_bot "PONG #{la[1]}"
@@ -100,6 +105,10 @@ module Repoto
                         if la[0][0] == ":"
                             if la[1] == "CAP" && la[2] == "#{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}" && la[3] == "ACK" && la[4] == ":identify-msg"
                                 @imsg_enabled = true
+                            elsif la[1] == "401" && la[3] == "NickServ"
+                                @nickserv_present = false
+                            elsif la[1] == "433"
+                                raise "Nickname already in use!"
                             end
                         end
                         usernick = ""
@@ -220,6 +229,19 @@ module Repoto
                                     oper = false
                                 end
                                 msg = msg[1..-1]
+                            elsif @nickserv_present
+                                dlog_bot "PRIVMSG NickServ ACC #{usernick}"
+                                @conn.puts "PRIVMSG NickServ ACC #{usernick}"
+                                ns_response = @conn.gets
+                                ns_response.force_encoding("utf-8")
+                                ns_response = ns_response.split(" ")
+                                if ns_response[0][0] == ":" && ns_response[1] == "NOTICE" && ns_response[2] == "#{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
+                                    if ns_response[5] == "3"
+                                        auth = true
+                                    else
+                                        oper = false
+                                    end
+                                end
                             end
                             if msg.nil? || msg.empty?
                                 next
@@ -795,18 +817,27 @@ module Repoto
             puts "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
             dlog_bot "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
             @conn.puts "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
-            puts "USER #{@nick.downcase}#{!@suffix.nil? ? "-#{@suffix.downcase}" : ""} 8 * :#{@nick}"
-            dlog_bot "USER #{@nick.downcase}#{!@suffix.nil? ? "-#{@suffix.downcase}" : ""} 8 * :#{@nick}"
-            @conn.puts "USER #{@nick.downcase}#{!@suffix.nil? ? "-#{@suffix.downcase}" : ""} 8 * :#{@nick}"
+            puts "USER #{!@suffix.nil? ? "#{@suffix.downcase}" : ""}-#{@nick.downcase} 8 * :#{@nick}"
+            dlog_bot "USER #{!@suffix.nil? ? "#{@suffix.downcase}" : ""}-#{@nick.downcase} 8 * :#{@nick}"
+            @conn.puts "USER #{!@suffix.nil? ? "#{@suffix.downcase}" : ""}-#{@nick.downcase} 8 * :#{@nick}"
             puts "CAP REQ identify-msg"
             dlog_bot "CAP REQ identify-msg"
             @conn.puts "CAP REQ identify-msg"
             puts "CAP END"
             dlog_bot "CAP END"
             @conn.puts "CAP END"
+        end
+        
+        def join_channel
             puts "JOIN :#{@channel}"
             dlog_bot "JOIN :#{@channel}"
             @conn.puts "JOIN :#{@channel}"
+        end
+        
+        def send_nickserv_check
+            puts "PRIVMSG NickServ help"
+            dlog_bot "PRIVMSG NickServ help"
+            @conn.puts "PRIVMSG NickServ help"
         end
         
         def send_message msg
