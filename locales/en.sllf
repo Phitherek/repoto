@@ -183,6 +183,22 @@ What to remind of?
 [question_time]
 What time to remind you at?
 {end}
+{id}
+[no_nickserv]
+NickServ not available on this server!
+[user]
+User
+[logged_in]
+is logged in
+[not_logged_in_recognized]
+is not logged in but recognized
+[exists_not_logged_in]
+exists but is not logged in
+[does_not_exist]
+does not exist
+[unknown_response]
+Unknown response from NickServ!
+{end}
 {restart}
 [channel]
 ... restarting ...
@@ -249,6 +265,8 @@ I will show you when I have last seen given user.
 I will leave a memo for a user and deliver it when the user arrives.
 [remind]
 I will create a reminder and remind you at specific time about something. Usage: ^remind (date time or date or time)|message
+[id]
+I will show you what NickServ thinks about you or other user.
 [save]
 I will save last 30 lines of channel log.
 {end}

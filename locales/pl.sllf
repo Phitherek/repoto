@@ -183,6 +183,22 @@ O czym przypomnieć?
 [question_time]
 Kiedy Ci o tym przypomnieć?
 {end}
+{id}
+[no_nickserv]
+NickServ jest niedostępny na tym serwerze!
+[user]
+Użytkownik
+[logged_in]
+jest zalogowany
+[not_logged_in_recognized]
+jest rozpoznany, lecz niezalogowany
+[exists_not_logged_in]
+istnieje, lecz jest niezalogowany
+[does_not_exist]
+nie istnieje
+[unknown_response]
+Nieznana odpowiedź od NickServ!
+{end}
 {restart}
 [channel]
 ... restartowanie ...
@@ -247,6 +263,8 @@ Pokażę Ci obecne locale lub je przełączę.
 Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
 [remind]
 Stworzę przypomnienie i przypomnę Ci o czymś w jakimś czasie. Użycie: ^remind (data czas lub data lub czas)|wiadomość
+[id]
+Powiem Ci, co NickServ myśli o Tobie lub innym użytkowniku.
 [save]
 Zapiszę ostatnie 30 linijek logu kanału.
 {end}

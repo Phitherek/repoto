@@ -29,7 +29,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "2.0"
+            @version = "2.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -233,6 +233,7 @@ module Repoto
                                 dlog_bot "PRIVMSG NickServ ACC #{usernick}"
                                 @conn.puts "PRIVMSG NickServ ACC #{usernick}"
                                 ns_response = @conn.gets
+                                dlog_server ns_response
                                 ns_response.force_encoding("utf-8")
                                 ns_response = ns_response.split(" ")
                                 if ns_response[0][0] == ":" && ns_response[1] == "NOTICE" && ns_response[2] == "#{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
@@ -542,6 +543,35 @@ module Repoto
                                     else
                                         send_message_to_user usernick, @loc.query("functions.memo.question_user")
                                     end
+                                when "id"
+                                    if @nickserv_present
+                                        if cmd[1].nil?
+                                            unick = usernick
+                                        else
+                                            unick = cmd[1]
+                                        end
+                                        dlog_bot "PRIVMSG NickServ ACC #{unick}"
+                                        @conn.puts "PRIVMSG NickServ ACC #{unick}"
+                                        ns_response = @conn.gets
+                                        ns_response.force_encoding("utf-8")
+                                        dlog_server ns_response
+                                        ns_response = ns_response.split(" ")
+                                        if ns_response[0][0] == ":" && ns_response[1] == "NOTICE" && ns_response[2] == "#{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
+                                            if ns_response[5] == "3"
+                                                send_message_to_user usernick, @loc.query("functions.id.user") + " " + unick + " " + @loc.query("functions.id.logged_in")
+                                            elsif ns_response[5] == "2"
+                                                send_message_to_user usernick, @loc.query("functions.id.user") + " " + unick + " " + @loc.query("functions.id.not_logged_in_recognized")
+                                            elsif ns_response[5] == "1"
+                                                send_message_to_user usernick, @loc.query("functions.id.user") + " " + unick + " " + @loc.query("functions.id.exists_not_logged_in")
+                                            elsif ns_response[5] == "0"
+                                                send_message_to_user usernick, @loc.query("functions.id.user") + " " + unick + " " + @loc.query("functions.id.does_not_exist")
+                                            else
+                                                send_message_to_user usernick, @loc.query("functions.id.unknown_reponse")
+                                            end
+                                        end
+                                    else
+                                        send_message_to_user usernick, @loc.query("functions.id.no_nickserv")
+                                    end
                                 when "remind"
                                     pcmd = cmd[1..-1].join(" ")
                                     time = ""
@@ -706,7 +736,7 @@ module Repoto
                                 else                                          
                                    send_message_to_user usernick, @loc.query("errors.no_command")
                                 end
-                            elsif msg[0..5] == "Repoto"
+                            elsif msg[/Repoto.*: /] != nil
                                 content = msg
                                 content[/Repoto.*: /] = ""
                                 if Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.name"))) && (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.what"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.please"))))
