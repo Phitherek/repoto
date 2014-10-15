@@ -29,7 +29,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "2.1"
+            @version = "2.2"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -636,7 +636,7 @@ module Repoto
                                     end
                                 when "help"
                                     if cmd[1].nil?
-                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}issues, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}save, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
+                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}issues, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}id, #{@prefix}save, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
                                     else
                                         case cmd[1]
                                         when "version"
@@ -675,6 +675,8 @@ module Repoto
                                             send_message_to_user usernick, @loc.query("help.save")
                                         when "issues"
                                             send_message_to_user usernick, @loc.query("help.issues")
+                                        when "id"
+                                            send_message_to_user usernick, @loc.query("help.id")
                                         when "whois"
                                             if @dynconfig[:hskrk] == "on"
                                                 send_message_to_user usernick, @loc.query("help.whois")
@@ -736,9 +738,9 @@ module Repoto
                                 else                                          
                                    send_message_to_user usernick, @loc.query("errors.no_command")
                                 end
-                            elsif msg[/Repoto.*: /] != nil
+                            elsif msg[/^Repoto.*: /] != nil
                                 content = msg
-                                content[/Repoto.*: /] = ""
+                                content[/^Repoto.*: /] = ""
                                 if Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.name"))) && (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.what"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.please"))))
                                     send_message_to_user usernick, @loc.query("conv.name")
                                 elsif Unicode.upcase(content) == Unicode.upcase(@loc.query("conv.keywords.ping"))
