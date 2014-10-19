@@ -787,7 +787,7 @@ module Repoto
                                         sleep(1)
                                         send_message @loc.query("redmine.issue_author") + " " + idata["issue"]["author"]["name"]
                                         sleep(1)
-                                        send_message @loc.query("redmine.issue_assignee") + " " + idata["issue"]["assigned_to"]["name"]
+                                        send_message @loc.query("redmine.issue_assignee") + " " + (idata["issue"]["assigned_to"].nil? ? @loc.query("redmine.none") : idata["issue"]["assigned_to"]["name"])
                                         sleep(1)
                                         send_message @loc.query("redmine.issue_status") + " " + idata["issue"]["status"]["name"]
                                         sleep(1)
