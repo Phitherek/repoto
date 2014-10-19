@@ -336,7 +336,9 @@ Co?
 [utf8]
 Używaj UTF-8. Lub giń. Proszę.
 {end}
-    {redmine}
+{redmine}
+[none]
+Brak
 [title]
 Redmine:
 [issue_url]

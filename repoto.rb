@@ -29,7 +29,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "2.2"
+            @version = "2.2.1"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -805,7 +805,7 @@ module Repoto
                                         sleep(1)
                                         send_message @loc.query("redmine.issue_author") + " " + idata["issue"]["author"]["name"]
                                         sleep(1)
-                                        send_message @loc.query("redmine.issue_assignee") + " " + idata["issue"]["assigned_to"]["name"]
+                                        send_message @loc.query("redmine.issue_assignee") + " " + (idata["issue"]["assigned_to"].nil? ? @loc.query("redmine.none") : idata["issue"]["assigned_to"]["name"])
                                         sleep(1)
                                         send_message @loc.query("redmine.issue_status") + " " + idata["issue"]["status"]["name"]
                                         sleep(1)
