@@ -6,6 +6,10 @@ require 'json'
 require 'simplelion-ruby'
 require 'unicode'
 require 'time'
+require_relative 'config'
+require_relative 'dynconfig'
+require_relative 'servicesauth'
+require_relative 'debuglog'
 require_relative 'seen'
 require_relative 'memo'
 require_relative 'saves'
@@ -16,48 +20,26 @@ require_relative 'github'
 module Repoto
     class Bot
         def initialize
-            if File.exists?("config.yml")
-                @config = YAML.load_file("config.yml")
-            else
-                raise "Could not read config!"
-            end
-            if File.exists?("dynconfig.yml")
-                @dynconfig = YAML.load_file("dynconfig.yml")
-            else
-                @dynconfig = {}
-            end
-            @channel = "#" + @config[:channel]
-            @nick = "Repoto"
-            @suffix = @config[:suffix]
-            @version = "2.2"
-            @creator = "Phitherek_"
-            @server = @config[:server]
-            @port = @config[:port].to_i
-            @prefix = @config[:prefix]
-            @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
-            @imsg_enabled = false
-            @nickserv_present = true
+            @config = Repoto::Config.instance
+            @dynconfig = Repoto::DynConfig.instance
+            @sauth = Repoto::ServicesAuth.instance
+            @loc = SimpleLion::Localization.new("locales", @dynconfig.locale)
             @seen = Repoto::Seen.new
             @memo = Repoto::Memo.new
             @saves = Repoto::Saves.new
             @reminder = Repoto::Reminder.new
-            if @config[:github_enabled]
-                @github = Repoto::Github.new(@config[:github_access_key])
+            if @config.github_enabled
+                @github = Repoto::Github.new(@config.github_access_key)
                 if @github.connection?
                     puts "GitHub connection successful!"
                 else
                     puts "GitHub connection failed!"
                 end
             end
-            if @config[:redmine_enabled]
-                @redmine = Repoto::Redmine.new(@config[:redmine_url], @config[:redmine_api_key])
+            if @config.redmine_enabled
+                @redmine = Repoto::Redmine.new(@config.redmine_url, @config.redmine_api_key)
             end
-            if @config[:debug_log_enabled]
-                @dlog = File.open(@config[:debug_log_path], "a")
-                puts "Opened debug log..."
-            end
-            
-            puts "Connecting..."
+            @dlog = Repoto::DebugLog.instance
             
             connect
             begin
