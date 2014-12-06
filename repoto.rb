@@ -12,6 +12,7 @@ require_relative 'saves'
 require_relative 'reminder'
 require_relative 'redmine'
 require_relative 'github'
+require_relative 'graphite'
 
 module Repoto
     class Bot
@@ -29,7 +30,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "2.2.1"
+            @version = "2.3"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -41,6 +42,7 @@ module Repoto
             @memo = Repoto::Memo.new
             @saves = Repoto::Saves.new
             @reminder = Repoto::Reminder.new
+            @hsgraphite = Repoto::Graphite.new("http://graphite.at.hskrk.pl")
             if @config[:github_enabled]
                 @github = Repoto::Github.new(@config[:github_access_key])
                 if @github.connection?
@@ -56,9 +58,9 @@ module Repoto
                 @dlog = File.open(@config[:debug_log_path], "a")
                 puts "Opened debug log..."
             end
-            
+
             puts "Connecting..."
-            
+
             connect
             begin
                 while line = @conn.gets
@@ -139,7 +141,7 @@ module Repoto
                                 @conn.close
                                 puts "Dumping seen data..."
                                 @seen.dump
-                                puts "Dumping memo data..."                
+                                puts "Dumping memo data..."
                                 @memo.dump
                                 puts "Dumping reminders..."
                                 @reminder.dump
@@ -191,7 +193,7 @@ module Repoto
                         else
                             @seen.update usernick, :join
                         end
-                        if @seen.find(usernick) == :now 
+                        if @seen.find(usernick) == :now
                             if !@memo.for_user(usernick).nil? && !@memo.for_user(usernick).empty?
                                 @memo.for_user(usernick).each do |m|
                                     send_message_to_user usernick, "#{@loc.query("functions.memo.memo_from")} #{m[:from]} #{@loc.query("functions.memo.received")} #{m[:time]}: #{m[:message]}"
@@ -371,7 +373,7 @@ module Repoto
                                                     sleep 2
                                                 end
                                             else
-                                              send_message_to_user usernick, @loc.query("functions.cr.how_many")  
+                                              send_message_to_user usernick, @loc.query("functions.cr.how_many")
                                             end
                                         else
                                             send_message_to_user usernick, @loc.query("functions.cr.no_command")
@@ -465,6 +467,45 @@ module Repoto
                                             send_message_to_user usernick, msg
                                         else
                                              send_message_to_user usernick, @loc.query("errors.connection")
+                                        end
+                                    else
+                                        send_message_to_user usernick, @loc.query("errors.no_command")
+                                    end
+                                when "graphite"
+                                    if @dynconfig[:hskrk] == "on"
+                                        if cmd[1] == "list" || (cmd[1] == "current" && cmd[2].nil?) || (cmd[1] == "avg" && cmd[2].nil?)
+                                            list = @hsgraphite.hs_list
+                                            if list.kind_of?(Array)
+                                                send_message_to_user usernick, @loc.query("functions.graphite.available_sensors") + " "  + list.join(", ")
+                                            else
+                                                send_message_to_user usernick, @loc.query("errors.connection")
+                                            end
+                                        elsif cmd[1] == "current"
+                                            current = @hsgraphite.hs_current cmd[2]
+                                            if current.kind_of?(Array)
+                                                send_message_to_user usernick, @loc.query("functions.graphite.sensor") + " "  + current[0] + ", " + @loc.query("functions.graphite.value") + " " + (current[1].nil? ? @loc.query("functions.graphite.nil") : current[1].to_s) + " (" + @loc.query("functions.graphite.updated_at") + " "  + current[2].to_s + ")"
+                                            else
+                                                if current == "empty"
+                                                    send_message_to_user usernick, @loc.query("functions.graphite.error_sensor_not_found") + " " + cmd[2]
+                                                else
+                                                    send_message_to_user usernick, @loc.query("errors.connection")
+                                                end
+                                            end
+                                        elsif cmd[1] == "avg"
+                                            avg = @hsgraphite.hs_avg cmd[2], cmd[3]
+                                            if avg.kind_of?(Array)
+                                                send_message_to_user usernick, @loc.query("functions.graphite.sensor") + " "  + avg[0] + ", " + @loc.query("functions.graphite.value") + " " + avg[1].to_s + " (" + @loc.query("functions.graphite.datapoints") + " " + avg[2].to_s + ")"
+                                            else
+                                                if avg == "empty"
+                                                    send_message_to_user usernick, @loc.query("functions.graphite.error_sensor_not_found") + " " + cmd[2]
+                                                elsif avg == "wrongdatapointsvalue"
+                                                    send_message_to_user usernick, @loc.query("functions.graphite.error_wrong_datapoints_value")
+                                                else
+                                                    send_message_to_user usernick, @loc.query("errors.connection")
+                                                end
+                                            end
+                                        else
+                                            send_message_to_user usernick, @loc.query("functions.graphite.error_unknown_subcommand")
                                         end
                                     else
                                         send_message_to_user usernick, @loc.query("errors.no_command")
@@ -614,7 +655,7 @@ module Repoto
                                         @conn.close
                                         puts "Dumping seen data..."
                                         @seen.dump
-                                        puts "Dumping memo data..."                
+                                        puts "Dumping memo data..."
                                         @memo.dump
                                         puts "Dumping reminders..."
                                         @reminder.dump
@@ -636,7 +677,7 @@ module Repoto
                                     end
                                 when "help"
                                     if cmd[1].nil?
-                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}issues, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}id, #{@prefix}save, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
+                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}graphite, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}issues, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}id, #{@prefix}save, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
                                     else
                                         case cmd[1]
                                         when "version"
@@ -689,6 +730,12 @@ module Repoto
                                             else
                                                 send_message_to_user usernick, @loc.query("help.no_command")
                                             end
+                                        when "graphite"
+                                            if @dynconfig[:hskrk] == "on"
+                                                send_message_to_user usernick, @loc.query("help.graphite")
+                                            else
+                                                send_message_to_user usernick, @loc.query("help.no_command")
+                                            end
                                         when "light"
                                             if @dynconfig[:hskrk] == "on"
                                                 send_message_to_user usernick, @loc.query("help.light")
@@ -735,7 +782,7 @@ module Repoto
                                             send_message_to_user usernick, @loc.query("help.no_command")
                                         end
                                     end
-                                else                                          
+                                else
                                    send_message_to_user usernick, @loc.query("errors.no_command")
                                 end
                             elsif msg[/^Repoto.*: /] != nil
@@ -752,7 +799,7 @@ module Repoto
                                 elsif Unicode.upcase(content)[0..2] == Unicode.upcase(@loc.query("conv.keywords.bye"))
                                     send_message_to_user usernick, @loc.query("conv.bye")
                                 elsif Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.good"))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.bot")))
-                                    send_message_to_user usernick, @loc.query("conv.good_bot")   
+                                    send_message_to_user usernick, @loc.query("conv.good_bot")
                                 elsif (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.bad"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.moron"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.useless")))) && Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.bot")))
                                     send_message_to_user usernick, @loc.query("conv.bad_bot")
                                 elsif Unicode.upcase(content) == Unicode.upcase(@loc.query("conv.keywords.wat"))
@@ -836,14 +883,14 @@ module Repoto
                 @conn.close
                 puts "Dumping seen data..."
                 @seen.dump
-                puts "Dumping memo data..."                
+                puts "Dumping memo data..."
                 @memo.dump
                 puts "Dumping reminders..."
                 @reminder.dump
                 puts "Exiting..."
             end
         end
-        
+
         def connect
             @conn = TCPSocket.new @server, @port
             puts "NICK #{@nick}#{!@suffix.nil? ? "|#{@suffix}" : ""}"
@@ -859,38 +906,38 @@ module Repoto
             dlog_bot "CAP END"
             @conn.puts "CAP END"
         end
-        
+
         def join_channel
             puts "JOIN :#{@channel}"
             dlog_bot "JOIN :#{@channel}"
             @conn.puts "JOIN :#{@channel}"
         end
-        
+
         def send_nickserv_check
             puts "PRIVMSG NickServ help"
             dlog_bot "PRIVMSG NickServ help"
             @conn.puts "PRIVMSG NickServ help"
         end
-        
+
         def send_message msg
             dlog_bot "PRIVMSG #{@channel} :#{msg}"
             @conn.puts "PRIVMSG #{@channel} :#{msg}"
         end
-        
+
         def send_message_to_user user, msg
             send_message "#{user}: #{msg}"
         end
-        
+
         def perform_action msg
             send_message "\001ACTION #{msg}\001"
         end
-        
+
         def dlog_server msg
             if @config[:debug_log_enabled]
-                @dlog.puts "[" + Time.now.to_s + "] SERVER: " + msg 
+                @dlog.puts "[" + Time.now.to_s + "] SERVER: " + msg
             end
         end
-        
+
         def dlog_bot msg
             if @config[:debug_log_enabled]
                 @dlog.puts "[" + Time.now.to_s + "] BOT: " + msg

@@ -55,7 +55,7 @@ na zlecenie
 [question]
 Kogo spingować?
 [msg]
-Ping od 
+Ping od
 {end}
 [addop]
 właśnie dał Ci uprawnienia operatora!
@@ -135,6 +135,26 @@ Brak użytkowników.
 {end}
 [temp]
 Temperatura w HS:
+{graphite}
+[available_sensors]
+Dostępne sensory:
+[sensor]
+Sensor:
+[value]
+Wartość:
+[nil]
+niezdefiniowana
+[updated_at]
+Ostatni odczyt:
+[error_sensor_not_found]
+Sensor nieznaleziony:
+[datapoints]
+Uwzględnionych punktów danych:
+[error_wrong_datapoints_value]
+Niepoprawna liczba punktów danych!
+[error_unknown_subcommand]
+Nieznana podkomenda graphite!
+{end}
 {light}
 [no_lights]
 Wszystkie światła w HS są wyłączone
@@ -245,6 +265,8 @@ Pokażę Ci URL do moich zagadnień lub dodam zagadnienie jeżeli dostanę subko
 Pokażę Ci kto aktualnie jest w Hackerspace Kraków.
 [temp]
 Pokażę Ci temperaturę w Hackerspace Kraków.
+[graphite]
+Pokażę Ci dane z sensorów z Graphite w Hackerspace Kraków. Użycie: (prefiks)graphite <podkomenda>. Podkomendy: list, current <nazwa sensora>, avg <nazwa sensora> <liczba uwzględnionych punktów danych>.
 [light]
 Pokażę Ci stan świateł w Hackerspace Kraków.
 [exit]
@@ -328,7 +350,7 @@ Cóż, bywa...
 [are_you_ok]
 Tak, wszystko w porządku.
 [prefix]
-Mój prefiks do komend to 
+Mój prefiks do komend to
 [generic]
 Co?
 {end}

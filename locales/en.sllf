@@ -1,5 +1,5 @@
 [usage]
-Usage: 
+Usage:
 {errors}
 [not_authorized]
 You are not authorized!
@@ -35,9 +35,9 @@ Unknown issues subcommand!
 [question]
 Who to poke?
 [msg1]
-pokes 
+pokes
 [msg2]
-on 
+on
 [msg3]
 ' s request
 {end}
@@ -55,7 +55,7 @@ on
 [question]
 Who to ping?
 [msg]
-Ping from 
+Ping from
 {end}
 [addop]
 has just made you an operator!
@@ -135,6 +135,26 @@ No users.
 {end}
 [temp]
 Temperature in HS:
+{graphite}
+[available_sensors]
+Available sensors:
+[sensor]
+Sensor:
+[value]
+Value:
+[nil]
+null
+[updated_at]
+Updated at:
+[error_sensor_not_found]
+Sensor not found:
+[datapoints]
+Included datapoints:
+[error_wrong_datapoints_value]
+Wrong datapoints number!
+[error_unknown_subcommand]
+Unknown graphite subcommand!
+{end}
 {light}
 [no_lights]
 All lights in HS are off
@@ -245,6 +265,8 @@ I will show you my issue URL or add an issue if I receive add subcommand.
 I will show you who is in Hackerspace Kraków.
 [temp]
 I will show you temperature in Hackerspace Kraków.
+[graphite]
+I willl show you data from sensors in Graphite in Hackerspace Kraków. Usage: (prefix)graphite <subcommand>. Subcommands: list, current <sensor name>, avg <sensor name> <number of included datapoints>.
 [light]
 I will show you light status in Hackerspace Kraków.
 [exit]
@@ -330,7 +352,7 @@ Well, that' s how it is...
 [are_you_ok]
 Yes, I' m fine.
 [prefix]
-My command prefix is 
+My command prefix is
 [generic]
 What?
 {end}
