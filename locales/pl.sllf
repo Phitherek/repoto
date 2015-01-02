@@ -7,6 +7,8 @@ Nie masz wystarczających uprawnień!
 Nie znam takiej komendy!
 [connection]
 Błąd połączenia...
+[json]
+Błąd JSON...
 {end}
 {functions}
 [version]

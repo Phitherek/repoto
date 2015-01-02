@@ -7,6 +7,8 @@ You are not authorized!
 I do not know this command!
 [connection]
 Connection error...
+[json]
+JSON error...
 {end}
 {functions}
 [version]
