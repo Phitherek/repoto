@@ -283,6 +283,8 @@ Na stałe zapiszę dynamiczną konfigurację.
 Pokażę Ci dostępne locale.
 [locale]
 Pokażę Ci obecne locale lub je przełączę.
+[memo]
+Zostawię użytkownikowi memo i pokażę mu gdy się pojawi.
 [seen]
 Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
 [remind]

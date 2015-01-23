@@ -22,15 +22,21 @@ module Repoto
             else
                 raise "Could not read config!"
             end
+            if !@config
+                raise "Could not read config!"
+            end
             if File.exists?("dynconfig.yml")
                 @dynconfig = YAML.load_file("dynconfig.yml")
             else
                 @dynconfig = {}
             end
+            if !@dynconfig
+                @dynconfig = {}
+            end
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "2.3.1"
+            @version = "2.3.2"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -96,9 +102,15 @@ module Repoto
                             else
                                 raise "Could not read config!"
                             end
+                            if !@config
+                                raise "Could not read config!"
+                            end
                             if File.exists?("dynconfig.yml")
                                 @dynconfig = YAML.load_file("dynconfig.yml")
                             else
+                                @dynconfig = {}
+                            end
+                            if !@dynconfig
                                 @dynconfig = {}
                             end
                             @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
@@ -152,9 +164,15 @@ module Repoto
                                 else
                                     raise "Could not read config!"
                                 end
+                                if !@config
+                                    raise "Could not read config!"
+                                end
                                 if File.exists?("dynconfig.yml")
                                     @dynconfig = YAML.load_file("dynconfig.yml")
                                 else
+                                    @dynconfig = {}
+                                end
+                                if !@dynconfig
                                     @dynconfig = {}
                                 end
                                 @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
@@ -179,9 +197,15 @@ module Repoto
                                 else
                                     raise "Could not read config!"
                                 end
+                                if !@config
+                                    raise "Could not read config!"
+                                end
                                 if File.exists?("dynconfig.yml")
                                     @dynconfig = YAML.load_file("dynconfig.yml")
                                 else
+                                    @dynconfig = {}
+                                end
+                                if !@dynconfig
                                     @dynconfig = {}
                                 end
                                 @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])
@@ -677,9 +701,15 @@ module Repoto
                                         else
                                             raise "Could not read config!"
                                         end
+                                        if !@config
+                                            raise "Could not read config!"
+                                        end
                                         if File.exists?("dynconfig.yml")
                                             @dynconfig = YAML.load_file("dynconfig.yml")
                                         else
+                                            @dynconfig = {}
+                                        end
+                                        if !@dynconfig
                                             @dynconfig = {}
                                         end
                                         @loc = SimpleLion::Localization.new("locales", @dynconfig[:locale])

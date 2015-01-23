@@ -8,13 +8,16 @@ module Repoto
             else
                 @reminders = {}
             end
+            if !@reminders
+                @reminders = {}
+            end
         end
-        
+
         def create user, time, msg
             @reminders[user.to_s] ||= []
             @reminders[user.to_s] << {:time => time, :msg => msg}
         end
-        
+
         def current_for_user user
             current_reminders = []
             now = Time.now
@@ -27,7 +30,7 @@ module Repoto
             end
             current_reminders
         end
-        
+
         def clean_for_user user
             now = Time.now
             if !@reminders[user.to_s].nil?
@@ -38,7 +41,7 @@ module Repoto
                 end
             end
         end
-        
+
         def dump
             File.open("reminders.yml", "w") do |f|
                 f << YAML.dump(@reminders)
