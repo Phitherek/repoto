@@ -13,6 +13,7 @@ require_relative 'reminder'
 require_relative 'redmine'
 require_relative 'github'
 require_relative 'graphite'
+require_relative 'ignore'
 
 module Repoto
     class Bot
@@ -36,7 +37,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "2.3.2"
+            @version = "2.3.3"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -49,6 +50,7 @@ module Repoto
             @saves = Repoto::Saves.new
             @reminder = Repoto::Reminder.new
             @hsgraphite = Repoto::Graphite.new("http://graphite.at.hskrk.pl")
+            @ignore = Repoto::Ignore.new
             if @config[:github_enabled]
                 @github = Repoto::Github.new(@config[:github_access_key])
                 if @github.connection?
@@ -95,7 +97,9 @@ module Repoto
                             @memo.dump
                             puts "Dumping reminders..."
                             @reminder.dump
-                            sleep 5
+                            puts "Dumping ignores..."
+                            @ignore.dump
+                            sleep 60
                             puts "Reconnecting..."
                             if File.exists?("config.yml")
                                 @config = YAML.load_file("config.yml")
@@ -157,6 +161,8 @@ module Repoto
                                 @memo.dump
                                 puts "Dumping reminders..."
                                 @reminder.dump
+                                puts "Dumping ignores..."
+                                @ignore.dump
                                 sleep 5
                                 puts "Reconnecting..."
                                 if File.exists?("config.yml")
@@ -273,7 +279,7 @@ module Repoto
                             if msg.nil? || msg.empty?
                                 next
                             end
-                            if msg[0] == @prefix && msg[1] != @prefix && msg[1] != "_" && msg[1] != " " && msg[1] != "\n" && msg[1] != nil
+                            if msg[0] == @prefix && msg[1] != @prefix && msg[1] != "_" && msg[1] != " " && msg[1] != "\n" && msg[1] != nil && !@ignore.has?(usernick)
                                 cmd = msg[1..-1]
                                 cmd = cmd.split(" ")
                                 case cmd[0]
@@ -679,6 +685,32 @@ module Repoto
                                     else
                                         send_message_to_user usernick, @loc.query("functions.remind.question_time")
                                     end
+                                when "ignore"
+                                    if oper
+                                        if !cmd[1]
+                                            send_message_to_user usernick, @loc.query("functions.ignore.available_subcommands") + " add remove"
+                                        else
+                                            if cmd[1] == "add"
+                                                if !cmd[2]
+                                                    send_message_to_user usernick, @loc.query("functions.ignore.which_user")
+                                                else
+                                                    @ignore.add cmd[2]
+                                                    send_message_to_user usernick, @loc.query("functions.ignore.added")
+                                                end
+                                            elsif cmd[1] == "remove"
+                                                if !cmd[2]
+                                                    send_message_to_user usernick, @loc.query("functions.ignore.which_user")
+                                                else
+                                                    @ignore.remove cmd[2]
+                                                    send_message_to_user usernick, @loc.query("functions.ignore.removed")
+                                                end
+                                            else
+                                                send_message_to_user usernick, @loc.query("functions.ignore.available_subcommands") + " add remove"
+                                            end
+                                        end
+                                    else
+                                        send_message_to_user usernick, @loc.query("errors.not_authorized")
+                                    end
                                 when "save"
                                     @saves.save usernick
                                     send_message_to_user usernick, @loc.query("functions.save")
@@ -695,6 +727,8 @@ module Repoto
                                         @memo.dump
                                         puts "Dumping reminders..."
                                         @reminder.dump
+                                        puts "Dumping ignores..."
+                                        @ignore.dump
                                         sleep 5
                                         if File.exists?("config.yml")
                                             @config = YAML.load_file("config.yml")
@@ -719,7 +753,7 @@ module Repoto
                                     end
                                 when "help"
                                     if cmd[1].nil?
-                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}graphite, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}issues, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}id, #{@prefix}save, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
+                                        send_message_to_user usernick, "#{@loc.query("help.available_commands")} #{@prefix}version, #{@prefix}creator, #{@prefix}operators, #{@prefix}addop,#{@dynconfig[:hskrk] == "on" ? " #{@prefix}whois, #{@prefix}temp, #{@prefix}graphite, #{@prefix}light," : ""} #{@prefix}ac, #{@prefix}lc, #{@prefix}rc, #{@prefix}c, #{@prefix}cu, #{@prefix}cd, #{@prefix}cr, #{@prefix}dumpdyn, #{@prefix}issues, #{@prefix}ping, #{@prefix}poke, #{@prefix}kick, #{@prefix}locales, #{@prefix}locale, #{@prefix}seen, #{@prefix}memo, #{@prefix}remind, #{@prefix}id, #{@prefix}save, #{@prefix}ignore, #{@prefix}help, #{@prefix}restart, #{@prefix}exit"
                                     else
                                         case cmd[1]
                                         when "version"
@@ -820,6 +854,12 @@ module Repoto
                                             else
                                                 send_message_to_user usernick, @loc.query("help.not_operator")
                                             end
+                                        when "ignore"
+                                            if oper
+                                                send_message_to_user usernick, @loc.query("help.ignore")
+                                            else
+                                                send_message_to_user usernick, @loc.query("help.not_operator")
+                                            end
                                         else
                                             send_message_to_user usernick, @loc.query("help.no_command")
                                         end
@@ -827,7 +867,7 @@ module Repoto
                                 else
                                    send_message_to_user usernick, @loc.query("errors.no_command")
                                 end
-                            elsif msg[/^Repoto.*: /] != nil
+                            elsif msg[/^Repoto.*: /] != nil  && !@ignore.has?(usernick)
                                 content = msg
                                 content[/^Repoto.*: /] = ""
                                 if Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.name"))) && (Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.what"))) || Unicode.upcase(content).include?(Unicode.upcase(@loc.query("conv.keywords.please"))))
@@ -853,7 +893,7 @@ module Repoto
                                 else
                                     send_message_to_user usernick, @loc.query("conv.generic")
                                 end
-                            elsif @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on" && Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA")
+                            elsif @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on" && Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA")  && !@ignore.has?(usernick)
                                 if msg.split(" ").first == "\001ACTION"
                                     msg["ACTION"] = (oper ? "[oper]" : "") + usernick
                                     msg.gsub!("\001", "")
@@ -929,6 +969,8 @@ module Repoto
                 @memo.dump
                 puts "Dumping reminders..."
                 @reminder.dump
+                puts "Dumping ignores..."
+                @ignore.dump
                 puts "Exiting..."
             end
         end

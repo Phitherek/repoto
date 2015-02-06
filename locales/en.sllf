@@ -63,6 +63,16 @@ Ping from
 has just made you an operator!
 [dumpdyn]
 Dynamic config saved!
+{ignore}
+[available_subcommands]
+Available subcommands:
+[which_user]
+Which user?
+[added]
+User ignored!
+[removed]
+User unignored!
+{end}
 {lc}
 [prelist]
 Custom commands:
@@ -293,6 +303,8 @@ I will create a reminder and remind you at specific time about something. Usage:
 I will show you what NickServ thinks about you or other user.
 [save]
 I will save last 30 lines of channel log.
+[ignore]
+I will ignore user of given nick. Subcommands: add remove.
 {end}
 {conv}
 {keywords}

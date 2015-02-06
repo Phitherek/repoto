@@ -63,6 +63,16 @@ Ping od
 właśnie dał Ci uprawnienia operatora!
 [dumpdyn]
 Dynamiczna konfiguracja zapisana!
+{ignore}
+[available_subcommands]
+Dostępne podkomendy:
+[which_user]
+Który użytkownik?
+[added]
+Użytkownik jest teraz ignorowany!
+[removed]
+Użytkownik nie jest już ignorowany!
+{end}
 {lc}
 [prelist]
 Komendy niestandardowe:
@@ -293,6 +303,8 @@ Stworzę przypomnienie i przypomnę Ci o czymś w jakimś czasie. Użycie: ^remi
 Powiem Ci, co NickServ myśli o Tobie lub innym użytkowniku.
 [save]
 Zapiszę ostatnie 30 linijek logu kanału.
+[ignore]
+Zignoruję użytkownika o danym nicku. Subkomendy: add remove.
 {end}
 {conv}
 {keywords}
