@@ -37,7 +37,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "2.3.4"
+            @version = "2.3.5"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -886,7 +886,7 @@ module Repoto
                                 else
                                     send_message_to_user usernick, @loc.query("conv.generic")
                                 end
-                            elsif Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA")  && !@ignore.has?(usernick)
+                            elsif Unicode.upcase(msg).match(/.*MAKA.?PAKA.*/) != nil && !@ignore.has?(usernick)
                                 if msg.split(" ").first == "\001ACTION"
                                     msg["ACTION"] = (oper ? "[oper]" : "") + usernick
                                     msg.gsub!("\001", "")
