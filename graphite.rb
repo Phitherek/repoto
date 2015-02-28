@@ -22,7 +22,7 @@ module Repoto
         end
 
         def hs_current sensor
-            r = HTTParty.get(@baseurl + "&target=hs.hardroom.#{sensor}&maxDataPoints=1")
+            r = HTTParty.get(@baseurl + "&target=hs.hardroom.#{sensor}&maxDataPoints=1&from=-10min")
              if r.code.to_s == "200"
                 p = JSON.parse(r.body)
                 if p.empty?
@@ -40,7 +40,7 @@ module Repoto
                 "wrongdatapointsvalue"
             else
                 datapoints = datapoints.to_i
-                r = HTTParty.get(@baseurl + "&target=hs.hardroom.#{sensor}&maxDataPoints=#{datapoints.to_s}")
+                r = HTTParty.get(@baseurl + "&target=hs.hardroom.#{sensor}&maxDataPoints=#{datapoints.to_s}&from=-10min")
                  if r.code.to_s == "200"
                     p = JSON.parse(r.body)
                     if p.empty?

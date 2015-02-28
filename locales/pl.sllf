@@ -100,6 +100,7 @@ nazwa_komendy
 Nie mogłem znaleźć tej komendy, wybacz...
 [question]
 Jaka komenda?
+{end}
 {cr}
 [no_command]
 Nie mogłem znaleźć tej komendy, wybacz...
@@ -108,15 +109,10 @@ Jaka komenda?
 [how_many]
 Ile razy powtórzyć tą komendę?
 {end}
-{end}
 [enablehskrk]
 Włączono funkcje specyficzne dla Hackerspace Kraków!
 [disablehskrk]
 Wyłączono funkcje specyficzne dla Hackerspace Kraków!
-[enablemp]
-Włączono tryb Maka Paka!
-[disablemp]
-Wyłączono tryb Maka Paka!
 {whois}
 [in_hs]
 W HS:
@@ -294,7 +290,7 @@ Pokażę Ci dostępne locale.
 [locale]
 Pokażę Ci obecne locale lub je przełączę.
 [memo]
-Zostawię użytkownikowi memo i pokażę mu gdy się pojawi.
+Zostawię użytkownikowi memo i pokażę mu, gdy wyśle wiadomość "maka paka".
 [seen]
 Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
 [remind]

@@ -113,10 +113,6 @@ How many times to repeat this command?
 Hackerspace Kraków specific functions enabled!
 [disablehskrk]
 Hackerspace Kraków specific functions disabled!
-[enablemp]
-Maka Paka mode enabled!
-[disablemp]
-Maka Paka mode disabled!
 {whois}
 [in_hs]
 In HS:
@@ -296,7 +292,7 @@ I will show you current locale or switch locale.
 [seen]
 I will show you when I have last seen given user.
 [memo]
-I will leave a memo for a user and deliver it when the user arrives.
+I will leave a memo for a user and deliver it when the user posts a "maka paka" message.
 [remind]
 I will create a reminder and remind you at specific time about something. Usage: ^remind (date time or date or time)|message
 [id]

@@ -37,7 +37,7 @@ module Repoto
             @channel = "#" + @config[:channel]
             @nick = "Repoto"
             @suffix = @config[:suffix]
-            @version = "2.3.3"
+            @version = "2.3.4"
             @creator = "Phitherek_"
             @server = @config[:server]
             @port = @config[:port].to_i
@@ -224,13 +224,6 @@ module Repoto
                             @seen.update usernick, :join
                         end
                         if @seen.find(usernick) == :now
-                            if !@memo.for_user(usernick).nil? && !@memo.for_user(usernick).empty?
-                                @memo.for_user(usernick).each do |m|
-                                    send_message_to_user usernick, "#{@loc.query("functions.memo.memo_from")} #{m[:from]} #{@loc.query("functions.memo.received")} #{m[:time]}: #{m[:message]}"
-                                    sleep(2)
-                                end
-                                @memo.delete_user_memos usernick
-                            end
                             if !@reminder.current_for_user(usernick).nil? && !@reminder.current_for_user(usernick).empty?
                                 @reminder.current_for_user(usernick).each do |r|
                                     send_message_to_user usernick, "#{@loc.query("functions.remind.reminder_for")} #{r[:time]}: #{r[:msg]}"
@@ -893,7 +886,7 @@ module Repoto
                                 else
                                     send_message_to_user usernick, @loc.query("conv.generic")
                                 end
-                            elsif @dynconfig[:hskrk] == "on" && @dynconfig[:mp] == "on" && Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA")  && !@ignore.has?(usernick)
+                            elsif Unicode.upcase(msg).include?("MAKA") && Unicode.upcase(msg).include?("PAKA")  && !@ignore.has?(usernick)
                                 if msg.split(" ").first == "\001ACTION"
                                     msg["ACTION"] = (oper ? "[oper]" : "") + usernick
                                     msg.gsub!("\001", "")
@@ -903,7 +896,13 @@ module Repoto
                                     puts (oper ? "[oper]" : "") + usernick + ": " + msg
                                     @saves.log (oper ? "[oper]" : "") + usernick + ": " + msg
                                 end
-                                send_message "maka paka "*Random.new.rand(10..30)
+                                if !@memo.for_user(usernick).nil? && !@memo.for_user(usernick).empty?
+                                    @memo.for_user(usernick).each do |m|
+                                        send_message_to_user usernick, "#{@loc.query("functions.memo.memo_from")} #{m[:from]} #{@loc.query("functions.memo.received")} #{m[:time]}: #{m[:message]}"
+                                        sleep(2)
+                                    end
+                                    @memo.delete_user_memos usernick
+                                end
                             else
                                 if msg.split(" ").first == "\001ACTION"
                                     msg["ACTION"] = (oper ? "[oper]" : "") + usernick
