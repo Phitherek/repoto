@@ -1,15 +1,24 @@
 require 'yaml'
+require 'singleton'
 
 module Repoto
     class Seen
+        include Singleton
         def initialize
+            reload
+        end
+
+        def reload
             if File.exists?("seendata.yml")
                 @seendata = YAML.load_file("seendata.yml")
             else
                 @seendata = {}
             end
+            if !@seendata
+                @seendata = {}
+            end
         end
-        
+
         def find nick
             if !@seendata[nick.to_s]
                 nil
@@ -27,7 +36,7 @@ module Repoto
             @seendata[nick.to_s][:time] = Time.now.to_s
             @seendata[nick.to_s][:type] = type.to_sym
         end
-        
+
         def dump
             @seendata.keys.each do |nick|
                 if @seendata[nick][:type] == :join
@@ -35,7 +44,7 @@ module Repoto
                     @seendata[nick][:type] = :part
                 end
             end
-                    
+
             File.open("seendata.yml", "w") do |f|
                 f << YAML.dump(@seendata)
             end

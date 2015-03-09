@@ -7,6 +7,8 @@ Nie masz wystarczających uprawnień!
 Nie znam takiej komendy!
 [connection]
 Błąd połączenia...
+[json]
+Błąd JSON...
 {end}
 {functions}
 [version]
@@ -55,12 +57,22 @@ na zlecenie
 [question]
 Kogo spingować?
 [msg]
-Ping od 
+Ping od
 {end}
 [addop]
 właśnie dał Ci uprawnienia operatora!
 [dumpdyn]
 Dynamiczna konfiguracja zapisana!
+{ignore}
+[available_subcommands]
+Dostępne podkomendy:
+[which_user]
+Który użytkownik?
+[added]
+Użytkownik jest teraz ignorowany!
+[removed]
+Użytkownik nie jest już ignorowany!
+{end}
 {lc}
 [prelist]
 Komendy niestandardowe:
@@ -88,6 +100,7 @@ nazwa_komendy
 Nie mogłem znaleźć tej komendy, wybacz...
 [question]
 Jaka komenda?
+{end}
 {cr}
 [no_command]
 Nie mogłem znaleźć tej komendy, wybacz...
@@ -96,15 +109,10 @@ Jaka komenda?
 [how_many]
 Ile razy powtórzyć tą komendę?
 {end}
-{end}
 [enablehskrk]
 Włączono funkcje specyficzne dla Hackerspace Kraków!
 [disablehskrk]
 Wyłączono funkcje specyficzne dla Hackerspace Kraków!
-[enablemp]
-Włączono tryb Maka Paka!
-[disablemp]
-Wyłączono tryb Maka Paka!
 {whois}
 [in_hs]
 W HS:
@@ -135,6 +143,26 @@ Brak użytkowników.
 {end}
 [temp]
 Temperatura w HS:
+{graphite}
+[available_sensors]
+Dostępne sensory:
+[sensor]
+Sensor:
+[value]
+Wartość:
+[nil]
+niezdefiniowana
+[updated_at]
+Ostatni odczyt:
+[error_sensor_not_found]
+Sensor nieznaleziony:
+[datapoints]
+Uwzględnionych punktów danych:
+[error_wrong_datapoints_value]
+Niepoprawna liczba punktów danych!
+[error_unknown_subcommand]
+Nieznana podkomenda graphite!
+{end}
 {light}
 [no_lights]
 Wszystkie światła w HS są wyłączone
@@ -245,6 +273,8 @@ Pokażę Ci URL do moich zagadnień lub dodam zagadnienie jeżeli dostanę subko
 Pokażę Ci kto aktualnie jest w Hackerspace Kraków.
 [temp]
 Pokażę Ci temperaturę w Hackerspace Kraków.
+[graphite]
+Pokażę Ci dane z sensorów z Graphite w Hackerspace Kraków. Użycie: (prefiks)graphite <podkomenda>. Podkomendy: list, current <nazwa sensora>, avg <nazwa sensora> <liczba uwzględnionych punktów danych>.
 [light]
 Pokażę Ci stan świateł w Hackerspace Kraków.
 [exit]
@@ -259,6 +289,8 @@ Na stałe zapiszę dynamiczną konfigurację.
 Pokażę Ci dostępne locale.
 [locale]
 Pokażę Ci obecne locale lub je przełączę.
+[memo]
+Zostawię użytkownikowi memo i pokażę mu, gdy wyśle wiadomość "maka paka".
 [seen]
 Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
 [remind]
@@ -267,6 +299,8 @@ Stworzę przypomnienie i przypomnę Ci o czymś w jakimś czasie. Użycie: ^remi
 Powiem Ci, co NickServ myśli o Tobie lub innym użytkowniku.
 [save]
 Zapiszę ostatnie 30 linijek logu kanału.
+[ignore]
+Zignoruję użytkownika o danym nicku. Subkomendy: add remove.
 {end}
 {conv}
 {keywords}
@@ -328,7 +362,7 @@ Cóż, bywa...
 [are_you_ok]
 Tak, wszystko w porządku.
 [prefix]
-Mój prefiks do komend to 
+Mój prefiks do komend to
 [generic]
 Co?
 {end}
