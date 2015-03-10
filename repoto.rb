@@ -63,7 +63,7 @@ module Repoto
                         @seen.update @alias.lookup(line.usernick), :join
                     elsif @mic.peek.type == :part || @mic.peek.type == :quit
                         line = @mic.pop
-                        if line.usernick == @config.full_nick && Unicode.upcase(line.message).include?("PING TIMEOUT")
+                        if line.usernick == @config.full_nick && Unicode.upcase(line.broken_line[3]).include?("PING TIMEOUT")
                             puts "Ping timeout - restarting..."
                             @mic.mute
                             @speaker.mute
@@ -88,7 +88,7 @@ module Repoto
                             @seen.update line.usernick, :part
                             @seen.update @alias.lookup(line.usernick), :part
                         end
-                    elsif ![:ncerror, :cap].include?(@mic.peek.type)
+                    elsif ![:ncerror, :cap, :ping].include?(@mic.peek.type)
                         @mic.pop
                     end
                 end

@@ -30,13 +30,13 @@ module Repoto
         end
 
         def send line
-            Repoto::DebugLog.instance.log_bot line
+            Repoto::DebugLog.instance.log_bot line if !line.nil?
             @conn.puts line
         end
 
         def recv
             r = @conn.gets
-            Repoto::DebugLog.instance.log_server r
+            Repoto::DebugLog.instance.log_server(r) if !r.nil?
             r
         end
     end
