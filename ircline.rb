@@ -72,7 +72,7 @@ module Repoto
         end
 
         def message
-            return @broken_line[3..-1].join(" ") if type == :privmsg
+            return @broken_line[3..-1].join(" ")[1..-1] if type == :privmsg
             nil
         end
     end

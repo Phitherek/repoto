@@ -44,7 +44,6 @@ module Repoto
                                         @users[line.usernick][:status] = "1"
                                         @users[line.usernick][:time] = Time.now
                                     end
-                                    puts @users
                                 elsif method == :acc
                                     Speaker.instance.enqueue IRCMessage.new("ACC #{line.usernick}", "NickServ", :privmsg)
                                 end
@@ -118,7 +117,6 @@ module Repoto
                     while true
                         if !Microphone.instance.peek.nil? && Microphone.instance.peek.type == :cap
                             line = Microphone.instance.pop
-                            puts line.broken_line.join(" ")
                             if line.broken_line[2] == Repoto::Config.instance.full_nick && line.broken_line[4] == ":identify-msg"
                                 if line.broken_line[3] == "ACK"
                                     enable_imsg!

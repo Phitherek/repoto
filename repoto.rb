@@ -23,6 +23,7 @@ require_relative 'speaker'
 require_relative 'localization'
 require_relative 'alias'
 require_relative 'connection'
+require_relative 'ping'
 
 module Repoto
     class Bot
@@ -41,6 +42,7 @@ module Repoto
             @mic = Repoto::Microphone.instance
             @speaker = Repoto::Speaker.instance
             @alias = Repoto::Alias.instance
+            @ping = Repoto::Ping.instance
             while true
                 if !@mic.peek.nil?
                     oper = false
@@ -71,7 +73,7 @@ module Repoto
                             @reminder.dump
                             @ignore.dump
                             @alias.dump
-                            Repoto::Connection.instance.reconnect
+                            Connection.instance.reconnect
                             @alias.reload
                             @ignore.reload
                             @reminder.reload
