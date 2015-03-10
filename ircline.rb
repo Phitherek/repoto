@@ -1,8 +1,12 @@
 module Repoto
     class IRCLine
         def initialize line
-            line.force_encoding('utf-8')
-            @broken_line = line.split(" ")
+            if !line.nil?
+                line.force_encoding('utf-8')
+                @broken_line = line.split(" ")
+            else
+                @broken_line = ""
+            end
         end
 
         def broken_line

@@ -3,7 +3,6 @@ require 'yaml'
 module Repoto
     class Alias
         include Singleton
-
         def initialize
             reload
         end
@@ -36,7 +35,7 @@ module Repoto
         end
 
         def dump
-            File.open("aliases.yml") do |f|
+            File.open("aliases.yml", "w") do |f|
                 f << YAML.dump(@aliases)
             end
         end

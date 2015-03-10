@@ -63,37 +63,56 @@ module Repoto
                         @seen.update @alias.lookup(line.usernick), :join
                     elsif @mic.peek.type == :part || @mic.peek.type == :quit
                         line = @mic.pop
-                        if line.usernick == @config.full_nick && Unicode.upcase(line.broken_line[3]).include?("PING TIMEOUT")
-                            puts "Ping timeout - restarting..."
-                            @mic.mute
-                            @speaker.mute
-                            @dynconfig.dump
-                            @seen.dump
-                            @memo.dump
-                            @reminder.dump
-                            @ignore.dump
-                            @alias.dump
-                            Connection.instance.reconnect
-                            @alias.reload
-                            @ignore.reload
-                            @reminder.reload
-                            @memo.reload
-                            @seen.reload
-                            @dynconfig.reload
-                            @speaker.unmute
-                            @mic.unmute
-                        else
-                            puts "*** #{line.usernick} has left the channel"
-                            @saves.log "*** #{line.usernick} has left the channel"
-                            @seen.update line.usernick, :part
-                            @seen.update @alias.lookup(line.usernick), :part
-                        end
+                        puts "*** #{line.usernick} has left the channel"
+                        @saves.log "*** #{line.usernick} has left the channel"
+                        @seen.update line.usernick, :part
+                        @seen.update @alias.lookup(line.usernick), :part
+                    elsif @mic.peek.type == :error
+                        @mic.pop
+                        puts "Server error - restarting"
+                        restart
                     elsif ![:ncerror, :cap, :ping].include?(@mic.peek.type)
                         @mic.pop
                     end
                 end
                 sleep 0.01
             end
+        end
+
+        def restart
+            @mic.mute
+            @speaker.mute
+            @ping.stop
+            @dynconfig.dump
+            @seen.dump
+            @memo.dump
+            @reminder.dump
+            @ignore.dump
+            @alias.dump
+            Connection.instance.reconnect
+            @alias.reload
+            @ignore.reload
+            @reminder.reload
+            @memo.reload
+            @seen.reload
+            @dynconfig.reload
+            @ping.reload
+            @speaker.unmute
+            @mic.unmute
+        end
+
+        def stop
+            @mic.mute
+            @speaker.mute
+            @ping.stop
+            @dynconfig.dump
+            @seen.dump
+            @memo.dump
+            @reminder.dump
+            @ignore.dump
+            @alias.dump
+            Connection.instance.close
+            exit 0
         end
     end
 end
