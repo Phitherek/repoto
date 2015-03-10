@@ -14,9 +14,6 @@ require_relative 'seen'
 require_relative 'memo'
 require_relative 'saves'
 require_relative 'reminder'
-require_relative 'redmine'
-require_relative 'github'
-require_relative 'graphite'
 require_relative 'ignore'
 require_relative 'microphone'
 require_relative 'speaker'
@@ -24,6 +21,9 @@ require_relative 'localization'
 require_relative 'alias'
 require_relative 'connection'
 require_relative 'ping'
+require_relative 'functions'
+require_relative 'conv'
+require_relative 'extras'
 
 module Repoto
     class Bot
@@ -93,6 +93,11 @@ module Repoto
                         puts "#{(line.target == @config.formatted_channel) ? "" : "[priv]"}#{oper ? "[oper]" : ""}#{line.usernick}: #{line.formatted_message}"
                         @seen.update line.usernick, :join
                         @seen.update @alias.lookup(line.usernick), :join
+                        if !Repoto::Functions.parse line
+                            if !Repoto::Conv.parse line
+                                Repoto::Extras.parse line
+                            end
+                        end
                     elsif ![:ncerror, :cap, :ping].include?(@mic.peek.type)
                         @mic.pop
                     end

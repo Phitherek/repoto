@@ -1,6 +1,7 @@
 require 'singleton'
 require_relative 'connection'
 require_relative 'irctranslator'
+require_relative 'ignore'
 module Repoto
     class Microphone
         include Singleton
@@ -29,11 +30,14 @@ module Repoto
         end
 
         def peek
-            return @queue.last
+            return @queue.last if !Ignore.instance.has?(@queue.last.usernick)
+            nil
         end
 
         def pop
-            return @queue.pop
+            return @queue.pop if !Ignore.instance.has?(@queue.last.usernick)
+            @queue.pop
+            nil
         end
     end
 end
