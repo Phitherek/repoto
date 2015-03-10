@@ -28,6 +28,10 @@ module Repoto
                     translated += msg.content
                     translated += "\001"
                 else
+                    if !msg.target.nil?
+                        translated += msg.target
+                        translated += ": "
+                    end
                     translated += msg.content
                 end
             elsif msg.type == :raw

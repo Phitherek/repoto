@@ -1,3 +1,4 @@
+require_relative 'servicesauth'
 module Repoto
     class IRCLine
         def initialize line
@@ -77,6 +78,17 @@ module Repoto
 
         def message
             return @broken_line[3..-1].join(" ")[1..-1] if type == :privmsg
+            nil
+        end
+
+        def formatted_message
+            if !message.nil?
+                if ServicesAuth.instance.method == :imsg
+                    return message[1..-1]
+                else
+                    return message
+                end
+            end
             nil
         end
     end

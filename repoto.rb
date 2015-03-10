@@ -61,6 +61,13 @@ module Repoto
                         @saves.log "*** #{line.usernick} has joined the channnel"
                         @seen.update line.usernick, :join
                         @seen.update @alias.lookup(line.usernick), :join
+                        # This part is MOST essential
+                        if @alias.lookup(line.usernick) == "R__"
+                            @speaker.enqueue IRCMessage.new(["Ohai :3", "Hi! ;)", "Hej! :)", "o/", "Haaaaaai :3"].shuffle.first, line.usernick, :channel)
+                        # This part is rather essential
+                        elsif @alias.lookup(line.usernick) == "Phitherek_"
+                            @speaker.enqueue IRCMessage.new(["Witaj", "Cześć", "Hej", "o/", "Maka paka!"].shuffle.first, line.usernick, :channel)
+                        end
                     elsif @mic.peek.type == :part || @mic.peek.type == :quit
                         line = @mic.pop
                         puts "*** #{line.usernick} has left the channel"
@@ -81,6 +88,11 @@ module Repoto
                         @mic.pop
                         puts "Server error - restarting"
                         restart
+                    elsif @mic.peek.type == :privmsg
+                        line = @mic.pop
+                        puts "#{(line.target == @config.formatted_channel) ? "" : "[priv]"}#{oper ? "[oper]" : ""}#{line.usernick}: #{line.formatted_message}"
+                        @seen.update line.usernick, :join
+                        @seen.update @alias.lookup(line.usernick), :join
                     elsif ![:ncerror, :cap, :ping].include?(@mic.peek.type)
                         @mic.pop
                     end
