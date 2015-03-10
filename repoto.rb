@@ -21,6 +21,8 @@ require_relative 'ignore'
 require_relative 'microphone'
 require_relative 'speaker'
 require_relative 'localization'
+require_relative 'alias'
+require_relative 'connection'
 
 module Repoto
     class Bot
@@ -38,14 +40,52 @@ module Repoto
             @dlog = Repoto::DebugLog.instance
             @mic = Repoto::Microphone.instance
             @speaker = Repoto::Speaker.instance
+            @alias = Repoto::Alias.instance
             while true
                 if !@mic.peek.nil?
+                    oper = false
+                    if !@mic.peek.usernick.nil? && @dynconfig.operators.include?(@mic.peek.usernick) && @sauth.status(@mic.peek.usernick) == :logged_in
+                        oper = true
+                    end
                     if @mic.peek.type == :firstline
                         @mic.pop
                         @speaker.join
                         @sauth.detect
                         sleep 5
                         @sauth.run
+                    elsif @mic.peek.type == :join
+                        line = @mic.pop
+                        puts "*** #{line.usernick} has joined the channel"
+                        @saves.log "*** #{line.usernick} has joined the channnel"
+                        @seen.update line.usernick, :join
+                        @seen.update @alias.lookup(line.usernick), :join
+                    elsif @mic.peek.type == :part || @mic.peek.type == :quit
+                        line = @mic.pop
+                        if line.usernick == @config.full_nick && Unicode.upcase(line.message).include?("PING TIMEOUT")
+                            puts "Ping timeout - restarting..."
+                            @mic.mute
+                            @speaker.mute
+                            @dynconfig.dump
+                            @seen.dump
+                            @memo.dump
+                            @reminder.dump
+                            @ignore.dump
+                            @alias.dump
+                            Repoto::Connection.instance.reconnect
+                            @alias.reload
+                            @ignore.reload
+                            @reminder.reload
+                            @memo.reload
+                            @seen.reload
+                            @dynconfig.reload
+                            @speaker.unmute
+                            @mic.unmute
+                        else
+                            puts "*** #{line.usernick} has left the channel"
+                            @saves.log "*** #{line.usernick} has left the channel"
+                            @seen.update line.usernick, :part
+                            @seen.update @alias.lookup(line.usernick), :part
+                        end
                     elsif ![:ncerror, :cap].include?(@mic.peek.type)
                         @mic.pop
                     end

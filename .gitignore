@@ -7,4 +7,6 @@ seendata.yml
 memodata.yml
 saves.yml
 reminders.yml
+aliases.yml
+ignores.yml
 *.log

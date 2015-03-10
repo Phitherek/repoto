@@ -66,6 +66,22 @@ module Repoto
             false
         end
 
+        def status nick
+            if !@users[nick].nil?
+                case @users[nick][:status]
+                when "3"
+                    return :logged_in
+                when "2"
+                    return :not_logged_in_recognized
+                when "1"
+                    return :exists_not_logged_in
+                else
+                    return :does_not_exist
+                end
+            end
+            :does_not_exist
+        end
+
         def method
             if @imsg_enabled
                 :imsg

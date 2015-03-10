@@ -22,7 +22,6 @@ module Repoto
         end
 
         def dump
-            FileUtils.rm("dynconfig.yml")
             File.open("dynconfig.yml", "w") do |f|
                 f << YAML.dump(@dynconfig)
             end
