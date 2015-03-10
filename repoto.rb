@@ -67,6 +67,16 @@ module Repoto
                         @saves.log "*** #{line.usernick} has left the channel"
                         @seen.update line.usernick, :part
                         @seen.update @alias.lookup(line.usernick), :part
+                    elsif @mic.peek.type == :kick
+                        line = @mic.pop
+                        puts "*** #{line.target} has been kicked from the channel by #{line.usernick}"
+                        @saves.log "*** #{line.target} has been kicked from the channel by #{line.usernick}"
+                        @seen.update line.target, :part
+                        @seen.update @alias.lookup(line.target), :part
+                        if line.target == @config.full_nick
+                            sleep 5
+                            @speaker.join
+                        end
                     elsif @mic.peek.type == :error
                         @mic.pop
                         puts "Server error - restarting"
