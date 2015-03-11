@@ -30,12 +30,12 @@ module Repoto
         end
 
         def peek
-            return @queue.last if !Ignore.instance.has?(@queue.last.usernick)
+            return @queue.last if !@queue.last.nil? && !Ignore.instance.has?(@queue.last.usernick)
             nil
         end
 
         def pop
-            return @queue.pop if !Ignore.instance.has?(@queue.last.usernick)
+            return @queue.pop if !@queue.last.nil? && !Ignore.instance.has?(@queue.last.usernick)
             @queue.pop
             nil
         end

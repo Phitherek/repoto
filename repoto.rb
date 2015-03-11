@@ -63,10 +63,10 @@ module Repoto
                         @seen.update @alias.lookup(line.usernick), :join
                         # This part is MOST essential
                         if @alias.lookup(line.usernick) == "R__"
-                            @speaker.enqueue IRCMessage.new(["Ohai :3", "Hi! ;)", "Hej! :)", "o/", "Haaaaaai :3"].shuffle.first, line.usernick, :channel)
+                            @speaker.enqueue IRCMessage.new(["Ohai :3", "Hi! ;)", "Hej! :)", "o/", "Haaaaaai :3"].shuffle(random: Random.new(Time.now.to_f.to_i)).first, line.usernick, :channel)
                         # This part is rather essential
                         elsif @alias.lookup(line.usernick) == "Phitherek_"
-                            @speaker.enqueue IRCMessage.new(["Witaj", "Cześć", "Hej", "o/", "Maka paka!"].shuffle.first, line.usernick, :channel)
+                            @speaker.enqueue IRCMessage.new(["Witaj", "Cześć", "Hej", "o/", "Maka paka!"].shuffle(random: Random.new(Time.now.to_f.to_i)).first, line.usernick, :channel)
                         end
                     elsif @mic.peek.type == :part || @mic.peek.type == :quit
                         line = @mic.pop

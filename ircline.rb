@@ -91,5 +91,12 @@ module Repoto
             end
             nil
         end
+
+        def broken_formatted_message
+            if !formatted_message.nil?
+                return formatted_message.split(" ")
+            end
+            nil
+        end
     end
 end
