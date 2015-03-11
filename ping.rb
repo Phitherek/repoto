@@ -20,7 +20,7 @@ module Repoto
             @thr = Thread.new do
                 while true
                     if !Microphone.instance.peek.nil?
-                        if Microphone.instance.peek.type == :ping
+                        if !Microphone.instance.peek.nil? && Microphone.instance.peek.type == :ping
                             line = Microphone.instance.pop
                             Speaker.instance.enqueue IRCMessage.new("PONG #{line.broken_line[1]}", nil, :raw)
                         end

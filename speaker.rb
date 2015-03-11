@@ -37,5 +37,10 @@ module Repoto
                 end
             end
         end
+
+        def empty?
+            @queue.empty?
+        end
+
     end
 end

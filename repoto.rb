@@ -139,7 +139,6 @@ module Repoto
             @ignore.dump
             @alias.dump
             Connection.instance.close
-            exit 0
         end
     end
 end
