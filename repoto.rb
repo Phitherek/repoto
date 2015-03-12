@@ -46,16 +46,16 @@ module Repoto
             while true
                 if !@mic.peek.nil?
                     oper = false
-                    if !@mic.peek.usernick.nil? && @dynconfig.operators.include?(@mic.peek.usernick) && @sauth.status(@mic.peek.usernick) == :logged_in
+                    if !@mic.peek.nil? && !@mic.peek.usernick.nil? && @dynconfig.operators.include?(@mic.peek.usernick) && @sauth.status(@mic.peek.usernick) == :logged_in
                         oper = true
                     end
-                    if @mic.peek.type == :firstline
+                    if !@mic.peek.nil? && @mic.peek.type == :firstline
                         @mic.pop
                         @speaker.join
                         @sauth.detect
                         sleep 5
                         @sauth.run
-                    elsif @mic.peek.type == :join
+                    elsif !@mic.peek.nil? && @mic.peek.type == :join
                         line = @mic.pop
                         puts "*** #{line.usernick} has joined the channel"
                         @saves.log "*** #{line.usernick} has joined the channnel"
@@ -68,13 +68,13 @@ module Repoto
                         elsif @alias.lookup(line.usernick) == "Phitherek_"
                             @speaker.enqueue IRCMessage.new(["Witaj", "Cześć", "Hej", "o/", "Maka paka!"].shuffle(random: Random.new(Time.now.to_f.to_i)).first, line.usernick, :channel)
                         end
-                    elsif @mic.peek.type == :part || @mic.peek.type == :quit
+                    elsif !@mic.peek.nil? && @mic.peek.type == :part || @mic.peek.type == :quit
                         line = @mic.pop
                         puts "*** #{line.usernick} has left the channel"
                         @saves.log "*** #{line.usernick} has left the channel"
                         @seen.update line.usernick, :part
                         @seen.update @alias.lookup(line.usernick), :part
-                    elsif @mic.peek.type == :kick
+                    elsif !@mic.peek.nil? && @mic.peek.type == :kick
                         line = @mic.pop
                         puts "*** #{line.target} has been kicked from the channel by #{line.usernick}"
                         @saves.log "*** #{line.target} has been kicked from the channel by #{line.usernick}"
@@ -84,11 +84,11 @@ module Repoto
                             sleep 5
                             @speaker.join
                         end
-                    elsif @mic.peek.type == :error
+                    elsif !@mic.peek.nil? && @mic.peek.type == :error
                         @mic.pop
                         puts "Server error - restarting"
                         restart
-                    elsif @mic.peek.type == :privmsg
+                    elsif !@mic.peek.nil? && @mic.peek.type == :privmsg
                         line = @mic.pop
                         puts "#{(line.target == @config.formatted_channel) ? "" : "[priv]"}#{oper ? "[oper]" : ""}#{line.usernick}: #{line.formatted_message}"
                         @seen.update line.usernick, :join
@@ -98,7 +98,7 @@ module Repoto
                                 Repoto::Extras.parse line
                             end
                         end
-                    elsif ![:ncerror, :cap, :ping].include?(@mic.peek.type)
+                    elsif !@mic.peek.nil? && ![:ncerror, :cap, :ping].include?(@mic.peek.type)
                         @mic.pop
                     end
                 end
@@ -110,7 +110,6 @@ module Repoto
             @mic.mute
             @speaker.mute
             @ping.stop
-            @dynconfig.dump
             @seen.dump
             @memo.dump
             @reminder.dump
@@ -132,7 +131,6 @@ module Repoto
             @mic.mute
             @speaker.mute
             @ping.stop
-            @dynconfig.dump
             @seen.dump
             @memo.dump
             @reminder.dump

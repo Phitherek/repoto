@@ -11,6 +11,9 @@ module Repoto
             else
                 @dynconfig = {}
             end
+            if @dynconfig[:hskrk].nil?
+                @dynconfig[:hskrk] = "off"
+            end
         end
 
         def reload
