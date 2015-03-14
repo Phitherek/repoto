@@ -227,6 +227,12 @@ does not exist
 [unknown_response]
 Unknown response from NickServ!
 {end}
+{useralias}
+[added]
+Alias successfully added!
+[removed]
+Alias successfully removed!
+{end}
 {restart}
 [channel]
 ... restarting ...
@@ -294,13 +300,15 @@ I will show you when I have last seen given user.
 [memo]
 I will leave a memo for a user and deliver it when the user posts a "maka paka" message.
 [remind]
-I will create a reminder and remind you at specific time about something. Usage: ^remind (date time or date or time)|message
+I will create a reminder and remind you at specific time about something. Usage: (prefix)remind (date time or date or time)|message
 [id]
 I will show you what NickServ thinks about you or other user.
 [save]
 I will save last 30 lines of channel log.
 [ignore]
 I will ignore user of given nick. Subcommands: add remove.
+[useralias]
+I will add an alias for the user. Usage: (prefix)useralias [add|remove|nick-for-lookup] [base-nick] [alias].
 {end}
 {conv}
 {keywords}

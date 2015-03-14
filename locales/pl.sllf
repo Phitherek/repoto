@@ -227,6 +227,12 @@ nie istnieje
 [unknown_response]
 Nieznana odpowiedź od NickServ!
 {end}
+{useralias}
+[added]
+Pomyślnie dodano alias!
+[removed]
+Pomyślnie usunięto alias!
+{end}
 {restart}
 [channel]
 ... restartowanie ...
@@ -294,13 +300,15 @@ Zostawię użytkownikowi memo i pokażę mu, gdy wyśle wiadomość "maka paka".
 [seen]
 Pokażę Ci kiedy ostatnio widziałem danego użytkownika.
 [remind]
-Stworzę przypomnienie i przypomnę Ci o czymś w jakimś czasie. Użycie: ^remind (data czas lub data lub czas)|wiadomość
+Stworzę przypomnienie i przypomnę Ci o czymś w jakimś czasie. Użycie: (prefiks)remind (data czas lub data lub czas)|wiadomość
 [id]
 Powiem Ci, co NickServ myśli o Tobie lub innym użytkowniku.
 [save]
 Zapiszę ostatnie 30 linijek logu kanału.
 [ignore]
 Zignoruję użytkownika o danym nicku. Subkomendy: add remove.
+[useralias]
+Dodam alias dla danego użytkownika. Użycie: (prefiks)useralias [add|remove|nick-do-znalezienia] [nick-bazowy] [alias].
 {end}
 {conv}
 {keywords}
