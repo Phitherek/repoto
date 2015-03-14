@@ -13,14 +13,14 @@ module Repoto
         def self.parse line
             if !line.nil? && line.kind_of?(IRCLine)
                 Thread.new do
-                    if Unicode.upcase(line.formatted_message).match(/.*MAKA.?PAKA.*/) != nil
+                    if Unicode.upcase(line.formatted_message).match(/.*MAKA.*PAKA.*/) != nil
                         if !Memo.instance.for_user(Alias.instance.lookup(line.usernick)).nil? || !Memo.instance.for_user(Alias.instance.lookup(line.usernick)).empty?
                             Memo.instance.for_user(Alias.instance.lookup(line.usernick)).each do |m|
                                 Speaker.instance.enqueue IRCMessage.new("#{Localization.instance.q("functions.memo.memo_from")} #{m[:from]} #{Localization.instance.q("functions.memo.received")} #{m[:time]}: #{m[:message]}", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                                 sleep(1)
                             end
                         end
-                        Memo.instance.delete_user_memos Alias.instance.lookup line.usernick
+                        Memo.instance.delete_user_memos(Alias.instance.lookup(line.usernick))
                     end
                     if Config.instance.redmine_enabled && line.formatted_message[/redmine:#[0-9]+/] != nil
                         begin

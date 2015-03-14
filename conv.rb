@@ -6,10 +6,10 @@ require_relative "config"
 module Repoto
     class Conv
         def self.parse line
-            if !line.nil? && line.kind_of?(IRCLine) && line.formatted_message[/^Repoto.*: /] != nil
+            if !line.nil? && line.kind_of?(IRCLine) && (line.formatted_message[/^Repoto.*: /] != nil || (line.target == Config.instance.full_nick))
                 Thread.new do
                     msg = line.formatted_message
-                    msg[/^Repoto.*: /] = ""
+                    msg[/^Repoto.*: /] = "" if line.formatted_message[/^Repoto.*: /] != nil
                     if matches_keyword?(msg[0..1], :hi) || matches_keyword?(msg[0..2], :hey)
                         Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("conv.hi"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                     elsif includes_keyword?(msg, :name) && includes_keyword?(msg, :what) || includes_keyword?(msg, :please)
