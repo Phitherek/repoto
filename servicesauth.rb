@@ -166,11 +166,11 @@ module Repoto
                         start_time = Time.now
                         while Time.now - start_time <= 5
                             begin
-                                if Microphone.instance.peek.type == :ncerror
-                                    if Microphone.instance.peek.broken_line[1] == "401" && Microphone.instance.peek.broken_line[3] == "NickServ"
+                                if !Microphone.instance.peek.nil? && Microphone.instance.peek.type == :ncerror
+                                    if !Microphone.instance.peek.nil? && Microphone.instance.peek.broken_line[1] == "401" && Microphone.instance.peek.broken_line[3] == "NickServ"
                                         disable_nickserv!
                                         Microphone.instance.pop
-                                    elsif Microphone.instance.peek.broken_line[1] == "433"
+                                    elsif !Microphone.instance.peek.nil? && Microphone.instance.peek.broken_line[1] == "433"
                                         raise "Nickname already in use!"
                                     end
                                 end
