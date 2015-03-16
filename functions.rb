@@ -61,6 +61,7 @@ module Repoto
                 Ping.instance.stop
                 Seen.instance.dump
                 Memo.instance.dump
+                Reminder.instance.stop
                 Reminder.instance.dump
                 Ignore.instance.dump
                 Alias.instance.dump
@@ -428,11 +429,11 @@ module Repoto
         end
 
         def self.remind line
-            pline.broken_formatted_message = line.broken_formatted_message[1..-1].join(" ")
+            pline = line.broken_formatted_message[1..-1].join(" ")
             time = ""
             msg = ""
             ps = :time
-            pline.broken_formatted_message.each_char do |c|
+            pline.each_char do |c|
                 if c == '|'
                     ps = :msg
                     next
@@ -446,7 +447,7 @@ module Repoto
             if !time.empty?
                 if !msg.empty?
                     begin
-                        Reminder.instance.create Alias.instance.lookup(usernick), Time.parse(time), msg
+                        Reminder.instance.create Alias.instance.lookup(line.usernick), Time.parse(time), msg
                         Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.remind.success"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                     rescue => e
                         Speaker.instance.enqueue IRCMessage.new("Exception! -> " + e.to_s, line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
@@ -499,6 +500,7 @@ module Repoto
                 Ping.instance.stop
                 Seen.instance.dump
                 Memo.instance.dump
+                Reminder.instance.stop
                 Reminder.instance.dump
                 Ignore.instance.dump
                 Alias.instance.dump
@@ -639,8 +641,11 @@ module Repoto
                 Speaker.instance.enqueue IRCMessage.new("#{Localization.instance.q("usage")} #{Config.instance.prefix}useralias [add|remove|nick-for-lookup] [base-nick] [alias]", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
             elsif line.broken_formatted_message[1] == "add"
                 if line.broken_formatted_message[2] != nil && line.broken_formatted_message[3] != nil
-                    Alias.instance.add line.broken_formatted_message[2], line.broken_formatted_message[3]
-                    Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.useralias.added"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                    if Alias.instance.add line.broken_formatted_message[2], line.broken_formatted_message[3]
+                        Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.useralias.added"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                    else
+                        Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.useralias.error"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                    end
                 else
                     Speaker.instance.enqueue IRCMessage.new("#{Localization.instance.q("usage")} #{Config.instance.prefix}useralias [add|remove|nick-for-lookup] [base-nick] [alias]", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                 end

@@ -232,6 +232,8 @@ Nieznana odpowiedź od NickServ!
 Pomyślnie dodano alias!
 [removed]
 Pomyślnie usunięto alias!
+[error]
+Nie można wykonać tej operacji aliasu!
 {end}
 {restart}
 [channel]

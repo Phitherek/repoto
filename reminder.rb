@@ -1,6 +1,11 @@
 require 'yaml'
 require 'time'
 require 'singleton'
+require_relative 'speaker'
+require_relative 'ircmessage'
+require_relative 'localization'
+require_relative 'seen'
+require_relative 'alias'
 
 module Repoto
     class Reminder
@@ -17,6 +22,20 @@ module Repoto
             end
             if !@reminders
                 @reminders = {}
+            end
+            @thr = Thread.new do
+                while true
+                    @reminders.each_key do |u|
+                        if Seen.instance.find(Alias.instance.lookup(u)) == :now
+                            current_for_user(Alias.instance.lookup(u)).each do |r|
+                                Speaker.instance.enqueue IRCMessage.new("#{Localization.instance.q("functions.remind.reminder_for")} #{r[:time]}: #{r[:msg]}", u, :privmsg)
+                                sleep 2
+                            end
+                            clean_for_user(Alias.instance.lookup(u))
+                        end
+                    end
+                    sleep 10
+                end
             end
         end
 
@@ -53,6 +72,10 @@ module Repoto
             File.open("reminders.yml", "w") do |f|
                 f << YAML.dump(@reminders)
             end
+        end
+
+        def stop
+            @thr.kill
         end
     end
 end

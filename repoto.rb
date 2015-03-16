@@ -112,6 +112,7 @@ module Repoto
             @ping.stop
             @seen.dump
             @memo.dump
+            @reminder.stop
             @reminder.dump
             @ignore.dump
             @alias.dump
@@ -133,6 +134,7 @@ module Repoto
             @ping.stop
             @seen.dump
             @memo.dump
+            @reminder.stop
             @reminder.dump
             @ignore.dump
             @alias.dump

@@ -232,6 +232,8 @@ Unknown response from NickServ!
 Alias successfully added!
 [removed]
 Alias successfully removed!
+[error]
+Could not perform this alias operation!
 {end}
 {restart}
 [channel]

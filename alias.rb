@@ -16,9 +16,25 @@ module Repoto
         end
 
         def add nick, al
-            @aliases[nick] ||= []
-            @aliases[nick] << al
-            @aliases[nick].uniq!
+            if !@aliases.has_key?(al)
+                ok = true
+                @aliases.each_value do |val|
+                    if val.include?(nick)
+                        ok = false
+                        break
+                    end
+                end
+                if ok
+                    @aliases[nick] ||= []
+                    @aliases[nick] << al
+                    @aliases[nick].uniq!
+                    true
+                else
+                    false
+                end
+            else
+                false
+            end
         end
 
         def remove nick, al
