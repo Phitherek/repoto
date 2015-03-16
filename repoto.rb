@@ -100,7 +100,7 @@ module Repoto
                                         Repoto::Extras.parse line
                                     end
                                 end
-                            elsif !@mic.peek.nil? && ![:ncerror, :cap, :ping].include?(@mic.peek.type)
+                            elsif !@mic.peek.nil? && ![:ncerror, :cap, :ping, :notice].include?(@mic.peek.type)
                                 @mic.pop
                             end
                         end

@@ -50,10 +50,13 @@ module Repoto
                                     end
                                 end
                             elsif !line.nil? && line.type == :notice
+                                line = Microphone.instance.pop
                                 if line.broken_line[2] == Repoto::Config.instance.full_nick
                                     if line.broken_line[4] == "ACC"
                                         nick = line.broken_line[3][1..-1]
+                                        puts nick
                                         @users[nick] ||= {}
+                                        puts line.broken_line[5]
                                         @users[nick][:status] = line.broken_line[5]
                                         @users[nick][:time] = Time.now
                                     end
