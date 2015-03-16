@@ -483,7 +483,9 @@ module Repoto
                         Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.ignore.available_subcommands") + " add remove", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                     end
                 end
-           end
+           else
+                Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("errors.not_authorized"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+            end
         end
 
         def self.save line

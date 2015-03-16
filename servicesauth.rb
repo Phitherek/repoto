@@ -23,42 +23,54 @@ module Repoto
                                 @users[u] = nil
                             end
                         end
-                        line = Microphone.instance.peek
-                        if !line.nil? && line.type == :privmsg
-                            check = false
-                            if @users[line.usernick] == nil
-                                check = true
-                            else
-                                if Time.now-@users[line.usernick][:time] > 600
+                        begin
+                            line = Microphone.instance.peek
+                            if !line.nil? && line.type == :privmsg
+                                check = false
+                                if @users[line.usernick] == nil
                                     check = true
-                                end
-                            end
-                            if check
-                                if method == :imsg
-                                    if line.message[0][0] == "+"
-                                        @users[line.usernick] ||= {}
-                                        @users[line.usernick][:status] = "3"
-                                        @users[line.usernick][:time] = Time.now
-                                    else
-                                        @users[line.usernick] ||= {}
-                                        @users[line.usernick][:status] = "1"
-                                        @users[line.usernick][:time] = Time.now
+                                else
+                                    if Time.now-@users[line.usernick][:time] > 600
+                                        check = true
                                     end
-                                elsif method == :acc
-                                    Speaker.instance.enqueue IRCMessage.new("ACC #{line.usernick}", "NickServ", :privmsg)
+                                end
+                                if check
+                                    if method == :imsg
+                                        if line.message[0][0] == "+"
+                                            @users[line.usernick] ||= {}
+                                            @users[line.usernick][:status] = "3"
+                                            @users[line.usernick][:time] = Time.now
+                                        else
+                                            @users[line.usernick] ||= {}
+                                            @users[line.usernick][:status] = "1"
+                                            @users[line.usernick][:time] = Time.now
+                                        end
+                                    elsif method == :acc
+                                        Speaker.instance.enqueue IRCMessage.new("ACC #{line.usernick}", "NickServ", :privmsg)
+                                    end
+                                end
+                            elsif !line.nil? && line.type == :notice
+                                if line.broken_line[2] == Repoto::Config.instance.full_nick
+                                    if line.broken_line[4] == "ACC"
+                                        nick = line.broken_line[3][1..-1]
+                                        @users[nick] ||= {}
+                                        @users[nick][:status] = line.broken_line[5]
+                                        @users[nick][:time] = Time.now
+                                    end
                                 end
                             end
-                        elsif !line.nil? && line.type == :notice
-                            if line.broken_line[2] == Repoto::Config.instance.full_nick
-                                if line.broken_line[4] == "ACC"
-                                    nick = line.broken_line[3][1..-1]
-                                    @users[nick] ||= {}
-                                    @users[nick][:status] = line.broken_line[5]
-                                    @users[nick][:time] = Time.now
-                                end
+                            sleep 0.01
+                        rescue Exception => e
+                            if e.to_s.include?("UTF-8")
+                                puts "UTF-8 exception caught!"
+                                next
+                            elsif e.to_s.include?("type") && e.to_s.include?("nil")
+                                puts "Nil line exception caught!"
+                                next
+                            else
+                                raise e
                             end
                         end
-                        sleep 0.01
                     end
                 end
             end
@@ -118,18 +130,30 @@ module Repoto
                 Speaker.instance.enqueue IRCMessage.new("CAP END", nil, :raw)
                 th = Thread.new do
                     while true
-                        if !Microphone.instance.peek.nil? && Microphone.instance.peek.type == :cap
-                            line = Microphone.instance.pop
-                            if line.broken_line[2] == Repoto::Config.instance.full_nick && line.broken_line[4] == ":identify-msg"
-                                if line.broken_line[3] == "ACK"
-                                    enable_imsg!
-                                elsif line.broken_line[3] == "NAK"
-                                    disable_imsg!
+                        begin
+                            if !Microphone.instance.peek.nil? && Microphone.instance.peek.type == :cap
+                                line = Microphone.instance.pop
+                                if line.broken_line[2] == Repoto::Config.instance.full_nick && line.broken_line[4] == ":identify-msg"
+                                    if line.broken_line[3] == "ACK"
+                                        enable_imsg!
+                                    elsif line.broken_line[3] == "NAK"
+                                        disable_imsg!
+                                    end
+                                    break
                                 end
-                                break
+                            end
+                            sleep 0.01
+                        rescue Exception => e
+                            if e.to_s.include?("UTF-8")
+                                puts "UTF-8 exception caught!"
+                                next
+                            elsif e.to_s.include?("type") && e.to_s.include?("nil")
+                                puts "Nil line exception caught!"
+                                next
+                            else
+                                raise e
                             end
                         end
-                        sleep 0.01
                     end
                 end
                 th.join
@@ -141,12 +165,24 @@ module Repoto
                     Thread.new do |t|
                         start_time = Time.now
                         while Time.now - start_time <= 5
-                            if Microphone.instance.peek.type == :ncerror
-                                if Microphone.instance.peek.broken_line[1] == "401" && Microphone.instance.peek.broken_line[3] == "NickServ"
-                                    disable_nickserv!
-                                    Microphone.instance.pop
-                                elsif Microphone.instance.peek.broken_line[1] == "433"
-                                    raise "Nickname already in use!"
+                            begin
+                                if Microphone.instance.peek.type == :ncerror
+                                    if Microphone.instance.peek.broken_line[1] == "401" && Microphone.instance.peek.broken_line[3] == "NickServ"
+                                        disable_nickserv!
+                                        Microphone.instance.pop
+                                    elsif Microphone.instance.peek.broken_line[1] == "433"
+                                        raise "Nickname already in use!"
+                                    end
+                                end
+                            rescue Exception => e
+                                if e.to_s.include?("UTF-8")
+                                    puts "UTF-8 exception caught!"
+                                    next
+                                elsif e.to_s.include?("type") && e.to_s.include?("nil")
+                                    puts "Nil line exception caught!"
+                                    next
+                                else
+                                    raise e
                                 end
                             end
                         end
