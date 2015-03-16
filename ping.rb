@@ -31,7 +31,6 @@ module Repoto
                             puts "Ping timeout - restarting..."
                             Microphone.instance.mute
                             Speaker.instance.mute
-                            DynConfig.instance.dump
                             Seen.instance.dump
                             Memo.instance.dump
                             Reminder.instance.dump
@@ -43,7 +42,7 @@ module Repoto
                             Reminder.instance.reload
                             Memo.instance.reload
                             Seen.instance.reload
-                            Dynconfig.instance.reload
+                            DynConfig.instance.reload
                             Speaker.instance.unmute
                             Microphone.instance.unmute
                             @last_ping = Time.now
