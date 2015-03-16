@@ -42,7 +42,11 @@ module Repoto
                 elsif @broken_line[1] == "PRIVMSG"
                     return :privmsg
                 elsif @broken_line[1] == "NOTICE"
-                    return :notice
+                    if @broken_line[4] == "ACC"
+                        return :acc
+                    else
+                        return :notice
+                    end
                 elsif @broken_line[1] == "401" || @broken_line[1] == "433"
                     return :ncerror
                 else
