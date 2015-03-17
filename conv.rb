@@ -6,7 +6,7 @@ require_relative "config"
 module Repoto
     class Conv
         def self.parse line
-            if !line.nil? && line.kind_of?(IRCLine) && (line.formatted_message[/^Repoto.*: /] != nil || (line.target == Config.instance.full_nick))
+            if !line.nil? && line.kind_of?(IRCLine) && (line.formatted_message[/^Repoto.*: /] != nil || (line.target == Config.instance.full_nick && Unicode.upcase(line.formatted_message).match(/.*MAKA.*PAKA.*/).nil? && line.formatted_message[/redmine:#[0-9]+/].nil?))
                 Thread.new do
                     msg = line.formatted_message
                     msg[/^Repoto.*: /] = "" if line.formatted_message[/^Repoto.*: /] != nil
