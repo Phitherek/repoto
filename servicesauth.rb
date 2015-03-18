@@ -19,7 +19,7 @@ module Repoto
                 Thread.new do |t|
                     while true
                         @users.each_key do |u|
-                            if !@users[u].nil? && Time.now - @users[u][:time] > 600
+                            if !@users[u].nil? && !@users[u][:time].nil? && Time.now - @users[u][:time] > 600
                                 @users[u] = nil
                             end
                         end

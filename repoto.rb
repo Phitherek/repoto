@@ -93,6 +93,7 @@ module Repoto
                             elsif !@mic.peek.nil? && @mic.peek.type == :privmsg
                                 line = @mic.pop
                                 puts "#{(line.target == @config.formatted_channel) ? "" : "[priv]"}#{oper ? "[oper]" : ""}#{line.usernick}: #{line.formatted_message}"
+                                @saves.log "#{oper ? "[oper]" : ""}#{line.usernick}: #{line.formatted_message}" if line.target == @config.formatted_channel
                                 @seen.update line.usernick, :join
                                 @seen.update @alias.lookup(line.usernick), :join
                                 if !Repoto::Functions.parse line
