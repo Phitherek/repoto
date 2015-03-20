@@ -30,7 +30,7 @@ module Repoto
                                 if @users[line.usernick] == nil
                                     check = true
                                 else
-                                    if Time.now-@users[line.usernick][:time] > 600
+                                    if !@users[line.usernick][:time].nil? && Time.now-@users[line.usernick][:time] > 600
                                         check = true
                                     end
                                 end
