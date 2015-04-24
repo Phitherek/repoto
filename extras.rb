@@ -5,6 +5,7 @@ require_relative 'alias'
 require_relative 'speaker'
 require_relative 'ircmessage'
 require_relative 'localization'
+require_relative 'specialmodes'
 module Repoto
     class Extras
         if Config.instance.redmine_enabled
@@ -53,6 +54,9 @@ module Repoto
                         rescue => e
                             Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("redmine.query_error") + " " + e.to_s, (line.target == Config.instance.formatted_channel) ? nil : line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                         end
+                    end
+                    if SpecialModes.instance.operator? && Unicode.upcase(line.formatted_message) == "1ST"
+                        Speaker.instance.enqueue IRCMessage.new("KICK #{Config.instance.formatted_channel} #{line.usernick} :#{Localization.instance.q("extras.1st.we_have_winner")}", nil, :raw)
                     end
                 end
             end

@@ -406,3 +406,9 @@ Stan:
 [issue_done]
 % wykonano:
 {end}
+{extras}
+{1st}
+[we_have_winner]
+Mamy dzisiejszego zwycięzcę!
+{end}
+{end}

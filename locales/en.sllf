@@ -406,3 +406,9 @@ Status:
 [issue_done]
 % Done:
 {end}
+{extras}
+{1st}
+[we_have_winner]
+We have today' s winner!
+{end}
+{end}

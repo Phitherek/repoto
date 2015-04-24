@@ -30,7 +30,7 @@ module Repoto
         end
 
         def version
-            "3.0.9"
+            "3.1.0"
         end
 
         def creator

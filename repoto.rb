@@ -24,6 +24,7 @@ require_relative 'ping'
 require_relative 'functions'
 require_relative 'conv'
 require_relative 'extras'
+require_relative 'specialmodes'
 
 module Repoto
     class Bot
@@ -44,6 +45,7 @@ module Repoto
                 @speaker = Repoto::Speaker.instance
                 @alias = Repoto::Alias.instance
                 @ping = Repoto::Ping.instance
+                @smodes = Repoto::SpecialModes.instance
                 while true
                     begin
                         if !@mic.peek.nil?
@@ -57,6 +59,9 @@ module Repoto
                                 @sauth.detect
                                 sleep 5
                                 @sauth.run
+                                if @config.nickserv_id_enabled && @sauth.method != :none
+                                    @speaker.enqueue IRCMessage.new("IDENTIFY #{@config.nickserv_password}", "NickServ", :privmsg)
+                                end
                             elsif !@mic.peek.nil? && @mic.peek.type == :join
                                 line = @mic.pop
                                 puts "*** #{line.usernick} has joined the channel"
@@ -101,7 +106,7 @@ module Repoto
                                         Repoto::Extras.parse line
                                     end
                                 end
-                            elsif !@mic.peek.nil? && ![:ncerror, :cap, :ping, :acc].include?(@mic.peek.type)
+                            elsif !@mic.peek.nil? && ![:ncerror, :cap, :ping, :acc, :whois_channels].include?(@mic.peek.type)
                                 @mic.pop
                             end
                         end
@@ -138,6 +143,7 @@ module Repoto
             @mic.mute
             @speaker.mute
             @ping.stop
+            @smodes.stop
             @seen.dump
             @memo.dump
             @reminder.stop
@@ -151,6 +157,7 @@ module Repoto
             @memo.reload
             @seen.reload
             @dynconfig.reload
+            @smodes.reload
             @ping.reload
             @speaker.unmute
             @mic.unmute
@@ -160,6 +167,7 @@ module Repoto
             @mic.mute
             @speaker.mute
             @ping.stop
+            @smodes.stop
             @seen.dump
             @memo.dump
             @reminder.stop

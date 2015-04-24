@@ -10,3 +10,5 @@
 :debug_log_path: <path-to-debug-log-file>
 :github_enabled: <true-or-false>
 :github_access_key: <your-github-access-key>
+:nickserv_id_enabled: <true-or-false>
+:nickserv_password: <your-nickserv-password>

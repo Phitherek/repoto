@@ -48,6 +48,8 @@ module Repoto
                         else
                             return :notice
                         end
+                    elsif @broken_line[1] == "319"
+                        return :whois_channels
                     elsif @broken_line[1] == "401" || @broken_line[1] == "433"
                         return :ncerror
                     else
@@ -78,7 +80,7 @@ module Repoto
         end
 
         def target
-            return @broken_line[3] if type == :kick
+            return @broken_line[3] if type == :kick || type == :whois_channels
             return @broken_line[2] if type == :privmsg
             nil
         end
@@ -86,6 +88,10 @@ module Repoto
         def message
             return @broken_line[3..-1].join(" ")[1..-1] if type == :privmsg
             nil
+        end
+
+        def whois_channels
+            return @broken_line[4..-1].join(" ")[1..-1] if type == :whois_channels
         end
 
         def formatted_message

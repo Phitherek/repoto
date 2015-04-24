@@ -8,6 +8,7 @@ require_relative 'memo'
 require_relative 'reminder'
 require_relative 'ignore'
 require_relative 'connection'
+require_relative 'specialmodes'
 module Repoto
     class Ping
         include Singleton
@@ -31,6 +32,7 @@ module Repoto
                             puts "Ping timeout - restarting..."
                             Microphone.instance.mute
                             Speaker.instance.mute
+                            SpecialModes.instance.stop
                             Seen.instance.dump
                             Memo.instance.dump
                             Reminder.instance.dump
@@ -43,6 +45,7 @@ module Repoto
                             Memo.instance.reload
                             Seen.instance.reload
                             DynConfig.instance.reload
+                            SpecialModes.instance.reload
                             Speaker.instance.unmute
                             Microphone.instance.unmute
                             @last_ping = Time.now

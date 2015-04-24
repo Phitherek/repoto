@@ -14,6 +14,7 @@ require_relative 'ignore'
 require_relative 'alias'
 require_relative 'github'
 require_relative 'graphite'
+require_relative 'specialmodes'
 module Repoto
     class Functions
         if Config.instance.github_enabled
@@ -59,6 +60,7 @@ module Repoto
                 end
                 Speaker.instance.mute
                 Ping.instance.stop
+                SpecialModes.instance.stop
                 Seen.instance.dump
                 Memo.instance.dump
                 Reminder.instance.stop
@@ -508,6 +510,7 @@ module Repoto
                 Microphone.instance.mute
                 Speaker.instance.mute
                 Ping.instance.stop
+                SpecialModes.instance.stop
                 Seen.instance.dump
                 Memo.instance.dump
                 Reminder.instance.stop
@@ -521,6 +524,7 @@ module Repoto
                 Memo.instance.reload
                 Seen.instance.reload
                 DynConfig.instance.reload
+                SpecialModes.instance.reload
                 Ping.instance.reload
                 Speaker.instance.unmute
                 Microphone.instance.unmute
