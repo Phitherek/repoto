@@ -23,9 +23,9 @@ module Repoto
         def self.parse line
             if !line.nil? && line.kind_of?(IRCLine) && line.formatted_message[0] == Config.instance.prefix && line.formatted_message[1] != Config.instance.prefix && line.formatted_message[1] != "_" && line.formatted_message[1] != " " && line.formatted_message[1] != "\n" && line.formatted_message[1] != nil
                 Thread.new do
-                    if line.target == Config.instance.formatted_channel && [:version, :creator, :operators, :exit, :poke, :kick, :ping, :addop, :dumpdyn, :lc, :ac, :rc, :c, :cu, :cd, :cr, :issues, :enablehskrk, :disablehskrk, :whois, :temp, :graphite, :light, :locales, :locale, :seen, :memo, :id, :remind, :ignore, :save, :restart, :help, :useralias].include?(line.broken_formatted_message[0][1..-1].to_sym)
+                    if line.target == Config.instance.formatted_channel && [:version, :creator, :operators, :exit, :poke, :kick, :ping, :addop, :dumpdyn, :lc, :ac, :rc, :c, :cu, :cd, :cr, :issues, :issue, :enablehskrk, :disablehskrk, :whois, :temp, :graphite, :light, :locales, :locale, :seen, :memo, :id, :remind, :ignore, :save, :restart, :help, :useralias].include?(line.broken_formatted_message[0][1..-1].to_sym)
                         self.send(line.broken_formatted_message[0][1..-1], line)
-                    elsif [:version, :creator, :operators, :exit, :addop, :dumpdyn, :lc, :ac, :rc, :c, :cu, :cd, :cr, :issues, :enablehskrk, :disablehskrk, :whois, :temp, :graphite, :light, :locales, :locale, :seen, :memo, :id, :remind, :ignore, :restart, :help, :useralias].include?(line.broken_formatted_message[0][1..-1].to_sym)
+                    elsif [:version, :creator, :operators, :exit, :addop, :dumpdyn, :lc, :ac, :rc, :c, :cu, :cd, :cr, :issues, :issue, :enablehskrk, :disablehskrk, :whois, :temp, :graphite, :light, :locales, :locale, :seen, :memo, :id, :remind, :ignore, :restart, :help, :useralias].include?(line.broken_formatted_message[0][1..-1].to_sym)
                         self.send(line.broken_formatted_message[0][1..-1], line)
                     else
                         Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("errors.no_command"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
@@ -226,6 +226,10 @@ module Repoto
             end
         end
 
+        def self.issue line
+            self.issues(line)
+        end
+
         def self.enablehskrk line
             if is_operator?(line.usernick)
                 DynConfig.instance.hskrk = "on"
@@ -246,18 +250,22 @@ module Repoto
 
         def self.whois line
             if DynConfig.instance.hskrk == "on"
-                data = Net::HTTP.get("whois.hskrk.pl", "/whois")
-                if !data.nil?
-                    begin
-                        data = JSON.parse(data)
-                        data["users"].each  do |u|
-                            u.insert(u.length/2, "\u200e")
+                begin
+                    data = Net::HTTP.get("whois.hskrk.pl", "/whois")
+                    if !data.nil?
+                        begin
+                            data = JSON.parse(data)
+                            data["users"].each  do |u|
+                                u.insert(u.length/2, "\u200e")
+                            end
+                            Speaker.instance.enqueue IRCMessage.new("#{Localization.instance.q("functions.whois.in_hs")} #{data["total_devices_count"]} #{data["total_devices_count"].to_s.length == 1 ? (data["total_devices_count"].to_i == 0 ? Localization.instance.q("functions.whois.devices0") : (data["total_devices_count"].to_i == 1 ? Localization.instance.q("functions.whois.devices1") : ((data["total_devices_count"].to_i > 1 && data["total_devices_count"].to_i < 5) ? (Localization.instance.q("functions.whois.devices24")) : (Localization.instance.q("functions.whois.devices59"))))) : (data["total_devices_count"].to_s[-2].to_i == 1 ? (Localization.instance.q("functions.whois.devices1019")) : ((data["total_devices_count"].to_s[-1].to_i > 1 && data["total_devices_count"].to_s[-1].to_i < 5) ? Localization.instance.q("functions.whois.devices24") : Localization.instance.q("functions.whois.devices59")))}, #{data["unknown_devices_count"]} #{data["unknown_devices_count"].to_s.length == 1 ? (data["unknown_devices_count"].to_i == 0 ? Localization.instance.q("functions.whois.unknown0") : (data["unknown_devices_count"].to_i == 1 ? Localization.instance.q("functions.whois.unknown1") : ((data["unknown_devices_count"].to_i > 1 && data["unknown_devices_count"].to_i < 5) ? (Localization.instance.q("functions.whois.unknown24")) : (Localization.instance.q("functions.whois.unknown59"))))) : (data["unknown_devices_count"].to_s[-2].to_i == 1 ? (Localization.instance.q("functions.whois.unknown1019")) : ((data["unknown_devices_count"].to_s[-1].to_i > 1 && data["unknown_devices_count"].to_s[-1].to_i < 5) ? Localization.instance.q("functions.whois.unknown24") : Localization.instance.q("functions.whois.unknown59")))}. #{data["users"].empty? ? Localization.instance.q("functions.whois.no_users") : Localization.instance.q("functions.whois.users")} #{data["users"].join(", ")}", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                        rescue JSON::JSONError => e
+                            Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("errors.json"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                         end
-                        Speaker.instance.enqueue IRCMessage.new("#{Localization.instance.q("functions.whois.in_hs")} #{data["total_devices_count"]} #{data["total_devices_count"].to_s.length == 1 ? (data["total_devices_count"].to_i == 0 ? Localization.instance.q("functions.whois.devices0") : (data["total_devices_count"].to_i == 1 ? Localization.instance.q("functions.whois.devices1") : ((data["total_devices_count"].to_i > 1 && data["total_devices_count"].to_i < 5) ? (Localization.instance.q("functions.whois.devices24")) : (Localization.instance.q("functions.whois.devices59"))))) : (data["total_devices_count"].to_s[-2].to_i == 1 ? (Localization.instance.q("functions.whois.devices1019")) : ((data["total_devices_count"].to_s[-1].to_i > 1 && data["total_devices_count"].to_s[-1].to_i < 5) ? Localization.instance.q("functions.whois.devices24") : Localization.instance.q("functions.whois.devices59")))}, #{data["unknown_devices_count"]} #{data["unknown_devices_count"].to_s.length == 1 ? (data["unknown_devices_count"].to_i == 0 ? Localization.instance.q("functions.whois.unknown0") : (data["unknown_devices_count"].to_i == 1 ? Localization.instance.q("functions.whois.unknown1") : ((data["unknown_devices_count"].to_i > 1 && data["unknown_devices_count"].to_i < 5) ? (Localization.instance.q("functions.whois.unknown24")) : (Localization.instance.q("functions.whois.unknown59"))))) : (data["unknown_devices_count"].to_s[-2].to_i == 1 ? (Localization.instance.q("functions.whois.unknown1019")) : ((data["unknown_devices_count"].to_s[-1].to_i > 1 && data["unknown_devices_count"].to_s[-1].to_i < 5) ? Localization.instance.q("functions.whois.unknown24") : Localization.instance.q("functions.whois.unknown59")))}. #{data["users"].empty? ? Localization.instance.q("functions.whois.no_users") : Localization.instance.q("functions.whois.users")} #{data["users"].join(", ")}", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
-                    rescue JSON::JSONError => e
-                        Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("errors.json"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                    else
+                        Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("errors.connection"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                     end
-                else
+                rescue Net::HTTPError => e
                     Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("errors.connection"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                 end
             else

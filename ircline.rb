@@ -19,39 +19,42 @@ module Repoto
         end
 
         def type
-            if @broken_line[0][0] == ':' && @broken_line[1] == "001"
-                return :firstline
-            end
-            if @broken_line[0] == "PING"
-                return :ping
-            end
-            if @broken_line[0] == "ERROR"
-                return :error
-            end
-            if @broken_line[0][0] == ":"
-                if @broken_line[1] == "CAP"
-                    return :cap
-                elsif @broken_line[1] == "JOIN"
-                    return :join
-                elsif @broken_line[1] == "PART"
-                    return :part
-                elsif @broken_line[1] == "QUIT"
-                    return :quit
-                elsif @broken_line[1] == "KICK"
-                    return :kick
-                elsif @broken_line[1] == "PRIVMSG"
-                    return :privmsg
-                elsif @broken_line[1] == "NOTICE"
-                    if @broken_line[4] == "ACC"
-                        return :acc
-                    else
-                        return :notice
-                    end
-                elsif @broken_line[1] == "401" || @broken_line[1] == "433"
-                    return :ncerror
-                else
-                    return :notsupported
+            if !@broken_line.nil? && !@broken_line.empty?
+                if @broken_line[0][0] == ':' && @broken_line[1] == "001"
+                    return :firstline
                 end
+                if @broken_line[0] == "PING"
+                    return :ping
+                end
+                if @broken_line[0] == "ERROR"
+                    return :error
+                end
+                if @broken_line[0][0] == ":"
+                    if @broken_line[1] == "CAP"
+                        return :cap
+                    elsif @broken_line[1] == "JOIN"
+                        return :join
+                    elsif @broken_line[1] == "PART"
+                        return :part
+                    elsif @broken_line[1] == "QUIT"
+                        return :quit
+                    elsif @broken_line[1] == "KICK"
+                        return :kick
+                    elsif @broken_line[1] == "PRIVMSG"
+                        return :privmsg
+                    elsif @broken_line[1] == "NOTICE"
+                        if @broken_line[4] == "ACC"
+                            return :acc
+                        else
+                            return :notice
+                        end
+                    elsif @broken_line[1] == "401" || @broken_line[1] == "433"
+                        return :ncerror
+                    else
+                        return :notsupported
+                    end
+                end
+                return :notsupported
             end
             return :notsupported
         end

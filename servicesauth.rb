@@ -18,7 +18,8 @@ module Repoto
             if method != :none
                 Thread.new do |t|
                     while true
-                        @users.each_key do |u|
+                        users = @users
+                        users.each_key do |u|
                             if !@users[u].nil? && !@users[u][:time].nil? && Time.now - @users[u][:time] > 600
                                 @users[u] = nil
                             end
@@ -82,8 +83,9 @@ module Repoto
             if method == :none
                 return :logged_in
             end
-            if !@users[nick].nil?
-                case @users[nick][:status]
+            users = @users
+            if !users[nick].nil?
+                case users[nick][:status]
                 when "3"
                     return :logged_in
                 when "2"
