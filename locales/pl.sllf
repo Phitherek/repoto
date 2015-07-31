@@ -235,6 +235,22 @@ Pomyślnie usunięto alias!
 [error]
 Nie można wykonać tej operacji aliasu!
 {end}
+{push}
+[pushmemo_from]
+PushMemo od
+[pushmemo_at]
+z
+[pushmemo_received]
+otrzymane
+[success]
+PushMemo wysłane pomyślnie!
+[question_message]
+Co wysłać temu użytkownikowi?
+[question_user]
+Który użytkownik?
+[not_configured]
+PushMema nie są poprawnie skonfigurowane w tej instancji!
+{end}
 {restart}
 [channel]
 ... restartowanie ...
@@ -311,6 +327,8 @@ Zapiszę ostatnie 30 linijek logu kanału.
 Zignoruję użytkownika o danym nicku. Subkomendy: add remove.
 [useralias]
 Dodam alias dla danego użytkownika. Użycie: (prefiks)useralias [add|remove|nick-do-znalezienia] [nick-bazowy] [alias].
+[push]
+Wyślę użytkownikowi PushMemo za pomocą usługi Pusher.
 {end}
 {conv}
 {keywords}

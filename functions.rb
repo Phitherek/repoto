@@ -15,18 +15,22 @@ require_relative 'alias'
 require_relative 'github'
 require_relative 'graphite'
 require_relative 'specialmodes'
+require_relative 'pusher'
 module Repoto
     class Functions
         if Config.instance.github_enabled
             @@github = Github.new(Config.instance.github_access_key)
         end
         @@graphite = Repoto::Graphite.new("http://graphite.at.hskrk.pl")
+        if Config.instance.pusher_enabled
+            Pusher.init("https://#{Config.instance.pusher_key}:#{Config.instance.pusher_secret}@api.pusherapp.com/apps/#{Config.instance.pusher_app_id}", 'my_event')
+        end
         def self.parse line
             if !line.nil? && line.kind_of?(IRCLine) && line.formatted_message[0] == Config.instance.prefix && line.formatted_message[1] != Config.instance.prefix && line.formatted_message[1] != "_" && line.formatted_message[1] != " " && line.formatted_message[1] != "\n" && line.formatted_message[1] != nil
                 Thread.new do
-                    if line.target == Config.instance.formatted_channel && [:version, :creator, :operators, :exit, :poke, :kick, :ping, :addop, :dumpdyn, :lc, :ac, :rc, :c, :cu, :cd, :cr, :issues, :issue, :enablehskrk, :disablehskrk, :whois, :temp, :graphite, :light, :locales, :locale, :seen, :memo, :id, :remind, :ignore, :save, :restart, :help, :useralias].include?(line.broken_formatted_message[0][1..-1].to_sym)
+                    if line.target == Config.instance.formatted_channel && [:version, :creator, :operators, :exit, :poke, :kick, :ping, :addop, :dumpdyn, :lc, :ac, :rc, :c, :cu, :cd, :cr, :issues, :issue, :enablehskrk, :disablehskrk, :whois, :temp, :graphite, :light, :locales, :locale, :seen, :memo, :id, :remind, :ignore, :save, :restart, :help, :useralias, :push].include?(line.broken_formatted_message[0][1..-1].to_sym)
                         self.send(line.broken_formatted_message[0][1..-1], line)
-                    elsif [:version, :creator, :operators, :exit, :addop, :dumpdyn, :lc, :ac, :rc, :c, :cu, :cd, :cr, :issues, :issue, :enablehskrk, :disablehskrk, :whois, :temp, :graphite, :light, :locales, :locale, :seen, :memo, :id, :remind, :ignore, :restart, :help, :useralias].include?(line.broken_formatted_message[0][1..-1].to_sym)
+                    elsif [:version, :creator, :operators, :exit, :addop, :dumpdyn, :lc, :ac, :rc, :c, :cu, :cd, :cr, :issues, :issue, :enablehskrk, :disablehskrk, :whois, :temp, :graphite, :light, :locales, :locale, :seen, :memo, :id, :remind, :ignore, :restart, :help, :useralias, :push].include?(line.broken_formatted_message[0][1..-1].to_sym)
                         self.send(line.broken_formatted_message[0][1..-1], line)
                     else
                         Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("errors.no_command"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
@@ -535,7 +539,7 @@ module Repoto
 
         def self.help line
             if line.broken_formatted_message[1].nil?
-                Speaker.instance.enqueue IRCMessage.new("#{Localization.instance.q("help.available_commands")} #{Config.instance.prefix}version, #{Config.instance.prefix}creator, #{Config.instance.prefix}operators, #{Config.instance.prefix}addop,#{DynConfig.instance.hskrk == "on" ? " #{Config.instance.prefix}whois, #{Config.instance.prefix}temp, #{Config.instance.prefix}graphite, #{Config.instance.prefix}light," : ""} #{Config.instance.prefix}ac, #{Config.instance.prefix}lc, #{Config.instance.prefix}rc, #{Config.instance.prefix}c, #{Config.instance.prefix}cu, #{Config.instance.prefix}cd, #{Config.instance.prefix}cr, #{Config.instance.prefix}dumpdyn, #{Config.instance.prefix}issues, #{Config.instance.prefix}ping, #{Config.instance.prefix}poke, #{Config.instance.prefix}kick, #{Config.instance.prefix}locales, #{Config.instance.prefix}locale, #{Config.instance.prefix}seen, #{Config.instance.prefix}memo, #{Config.instance.prefix}remind, #{Config.instance.prefix}id, #{Config.instance.prefix}save, #{Config.instance.prefix}ignore, #{Config.instance.prefix}useralias, #{Config.instance.prefix}help, #{Config.instance.prefix}restart, #{Config.instance.prefix}exit", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                Speaker.instance.enqueue IRCMessage.new("#{Localization.instance.q("help.available_commands")} #{Config.instance.prefix}version, #{Config.instance.prefix}creator, #{Config.instance.prefix}operators, #{Config.instance.prefix}addop,#{DynConfig.instance.hskrk == "on" ? " #{Config.instance.prefix}whois, #{Config.instance.prefix}temp, #{Config.instance.prefix}graphite, #{Config.instance.prefix}light," : ""} #{Config.instance.prefix}ac, #{Config.instance.prefix}lc, #{Config.instance.prefix}rc, #{Config.instance.prefix}c, #{Config.instance.prefix}cu, #{Config.instance.prefix}cd, #{Config.instance.prefix}cr, #{Config.instance.prefix}dumpdyn, #{Config.instance.prefix}issues, #{Config.instance.prefix}ping, #{Config.instance.prefix}poke, #{Config.instance.prefix}kick, #{Config.instance.prefix}locales, #{Config.instance.prefix}locale, #{Config.instance.prefix}seen, #{Config.instance.prefix}memo, #{Config.instance.prefix}remind, #{Config.instance.prefix}id, #{Config.instance.prefix}save, #{Config.instance.prefix}ignore, #{Config.instance.prefix}useralias, #{Config.instance.prefix}push, #{Config.instance.prefix}help, #{Config.instance.prefix}restart, #{Config.instance.prefix}exit", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
             else
                 case line.broken_formatted_message[1]
                 when "version"
@@ -644,6 +648,8 @@ module Repoto
                     end
                 when "useralias"
                     Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("help.useralias"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                when "push"
+                    Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("help.useralias"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                 else
                     Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("help.no_command"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                 end
@@ -672,6 +678,23 @@ module Repoto
                 end
             else
                 Speaker.instance.enqueue IRCMessage.new(Alias.instance.lookup(line.broken_formatted_message[1]), nil, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+            end
+        end
+
+        def self.push line
+            if Config.instance.pusher_enabled
+                if !line.broken_formatted_message[1].nil?
+                    if !line.broken_formatted_message[2].nil?
+                        Pusher.push(Alias.instance.lookup(line.broken_formatted_message[1]), "#{Localization.instance.q("functions.push.pushmemo_from")} #{line.usernick} #{Localization.instance.q("functions.push.pushmemo_at")} #{Config.instance.formatted_channel} #{Localization.instance.q("functions.push.pushmemo_received")} #{Time.now.to_s}: #{line.broken_formatted_message[2]}")
+                        Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.push.success"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                    else
+                        Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.push.question_message"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                    end
+                else
+                    Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.push.question_user"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                end
+            else
+                Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.push.not_configured"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
             end
         end
 

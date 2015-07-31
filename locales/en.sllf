@@ -235,6 +235,22 @@ Alias successfully removed!
 [error]
 Could not perform this alias operation!
 {end}
+{push}
+[pushmemo_from]
+PushMemo from
+[pushmemo_at]
+at
+[pushmemo_received]
+received
+[success]
+PushMemo sent successfully!
+[question_message]
+What to send to this user?
+[question_user]
+Which user?
+[not_configured]
+PushMemos not properly configured for this instance!
+{end}
 {restart}
 [channel]
 ... restarting ...
@@ -311,6 +327,8 @@ I will save last 30 lines of channel log.
 I will ignore user of given nick. Subcommands: add remove.
 [useralias]
 I will add an alias for the user. Usage: (prefix)useralias [add|remove|nick-for-lookup] [base-nick] [alias].
+[push]
+I will send a PushMemo to a user via Pusher service.
 {end}
 {conv}
 {keywords}

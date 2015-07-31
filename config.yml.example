@@ -12,3 +12,7 @@
 :github_access_key: <your-github-access-key>
 :nickserv_id_enabled: <true-or-false>
 :nickserv_password: <your-nickserv-password>
+:pusher_enabled: <true-or-false>
+:pusher_key: <your-pusher-access-key>
+:pusher_secret: <your-pusher-access-secret>
+:pusher_app_id: <your-pusher-app-id>
