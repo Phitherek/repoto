@@ -685,8 +685,12 @@ module Repoto
             if Config.instance.pusher_enabled
                 if !line.broken_formatted_message[1].nil?
                     if !line.broken_formatted_message[2].nil?
-                        Pusher.push(Alias.instance.lookup(line.broken_formatted_message[1]), "#{Localization.instance.q("functions.push.pushmemo_from")} #{line.usernick} #{Localization.instance.q("functions.push.pushmemo_at")} #{Config.instance.formatted_channel} #{Localization.instance.q("functions.push.pushmemo_received")} #{Time.now.to_s}: #{line.broken_formatted_message[2]}")
-                        Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.push.success"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                        begin
+                            Pusher.push(Alias.instance.lookup(line.broken_formatted_message[1]), "#{Localization.instance.q("functions.push.pushmemo_from")} #{line.usernick} #{Localization.instance.q("functions.push.pushmemo_at")} #{Config.instance.formatted_channel} #{Localization.instance.q("functions.push.pushmemo_received")} #{Time.now.to_s}: #{line.broken_formatted_message[2..-1].join(" ")}")
+                            Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.push.success"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                        rescue Pusher::Error => e
+                            Speaker.instance.enqueue IRCMessage.new("Pusher::Error - #{e.to_s}", line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                        end
                     else
                         Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("functions.push.question_message"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                     end
