@@ -30,6 +30,8 @@ module Repoto
                         Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("conv.are_you_ok"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                     elsif includes_keyword?(msg, :prefix)
                         Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("conv.prefix") + " " + Config.instance.prefix, line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
+                    elsif (includes_keyword?(msg, :cookie) || includes_keyword?(msg, :cookie2)) && includes_keyword?(msg, :want)
+                        Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("conv.cookie"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)
                     else
                         if Random.rand(3) != 2
                             Speaker.instance.enqueue IRCMessage.new(Localization.instance.q("conv.generic"), line.usernick, (line.target == Config.instance.formatted_channel) ? :channel : :privmsg)

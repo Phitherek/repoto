@@ -370,6 +370,12 @@ you
 OK
 [prefix]
 prefix
+[cookie]
+cookie
+[cookie2]
+cookie
+[want]
+want
 {end}
 [name]
 My name is Repoto. Nice to meet you.
@@ -391,6 +397,8 @@ Well, that' s how it is...
 Yes, I' m fine.
 [prefix]
 My command prefix is
+[cookie]
+I' m a bot, I can' t eat cookies. My gears would become busted ._.
 [generic]
 What?
 {end}
